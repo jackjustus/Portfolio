@@ -1,14 +1,23 @@
 ---
-const { text } = Astro.props;
+const { text, href } = Astro.props;
 ---
-<span class="word-of-interest">
+<a class="word-of-interest" href = {href}>
     {text}
-</span>
+</a>
 <style>
     .word-of-interest {
         display: inline-block;
         transition: 0.2s ease-in-out;
         cursor: pointer;
+        color: inherit;
+        text-decoration: none;
+        background: none;
+    }
+    .word-of-interest:visited {
+        color: inherit;
+    }
+    .word-of-interest:focus {
+        outline: none;
     }
     .word-of-interest:hover {
         text-decoration: underline;

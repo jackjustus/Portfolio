@@ -1,0 +1,31 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Greeter from '../components/Greeter.astro';
+---
+
+<Layout title="jack justus engineering">
+	<!--<Greeter title="jack justus engineering"></Greeter>-->
+	<p>
+		jack justus engineering
+	</p>
+	<style>
+		p {
+			color: #714b4b;
+		}
+		h1 {
+			font-family: var(--work-sans), sans-serif;
+			font-weight: bolder;
+			margin: 8px;
+
+		}
+		p {
+			margin-top: 0;
+			margin-bottom: 8px;
+		}
+		/*noinspection CssUnresolvedCustomProperty*/
+		body {
+			font-family: var(--libre-baskerville), serif;
+			cursor: default;
+		}
+	</style>
+</Layout>
