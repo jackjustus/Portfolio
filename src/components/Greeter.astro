@@ -2,32 +2,39 @@
 import WordOfInterest from "./WordOfInterest.astro";
 const { title } = Astro.props;
 ---
-<header>
+<div class="card">
     <h1>{title}</h1>
-    <body>
+    <p>
         Hey my name is Jack and i love
-    </body>
-    <WordOfInterest text="computers, "/>
-    <WordOfInterest text="roller coasters, "/>
-    <body>
+        <WordOfInterest text="computers, "/>
+        <WordOfInterest text="roller coasters, "/>
         and
-    </body>
-    <WordOfInterest text="lighting design."/>
-    <body>
-    I'm currently studying at Boston University for a B.S. in Computer Engineering.
-    </body>
+        <WordOfInterest text="lighting design."/>
+        I'm currently studying at Boston University for a B.S. in Computer Engineering.
+    </p>
 
     <style>
-        header {
-            padding-left: 8px
+        .card {
+            padding-left: 8px;
+            background-color: #222222;
+            border: 2px solid #555555;
+            border-radius: 8px;
         }
         /*noinspection CssUnresolvedCustomProperty*/
         h1 {
-            font-family: var(--work-sans), sans-serif
+            font-family: var(--work-sans), sans-serif;
+            font-weight: bolder;
+            margin: 8px;
+
+        }
+        p {
+            margin-top: 0;
+            margin-bottom: 8px;
         }
         /*noinspection CssUnresolvedCustomProperty*/
         body {
             font-family: var(--libre-baskerville), serif;
+            cursor: default;
         }
     </style>
-</header>
+</div>
