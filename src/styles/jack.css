@@ -1,0 +1,10 @@
+:root {
+    --color-bg: #101010;
+    --color-text-primary: #d5d5d5;
+    /*--font-header: var(--work-sans), sans-serif;*/
+}
+
+body {
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+}

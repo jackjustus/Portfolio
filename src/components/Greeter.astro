@@ -1,0 +1,33 @@
+---
+import WordOfInterest from "./WordOfInterest.astro";
+const { title } = Astro.props;
+---
+<header>
+    <h1>{title}</h1>
+    <body>
+        Hey my name is Jack and i love
+    </body>
+    <WordOfInterest text="computers, "/>
+    <WordOfInterest text="roller coasters, "/>
+    <body>
+        and
+    </body>
+    <WordOfInterest text="lighting design."/>
+    <body>
+    I'm currently studying at Boston University for a B.S. in Computer Engineering.
+    </body>
+
+    <style>
+        header {
+            padding-left: 8px
+        }
+        /*noinspection CssUnresolvedCustomProperty*/
+        h1 {
+            font-family: var(--work-sans), sans-serif
+        }
+        /*noinspection CssUnresolvedCustomProperty*/
+        body {
+            font-family: var(--libre-baskerville), serif;
+        }
+    </style>
+</header>

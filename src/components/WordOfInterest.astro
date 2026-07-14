@@ -1,0 +1,17 @@
+---
+const { text } = Astro.props;
+---
+<span class="word-of-interest">
+    {text}
+</span>
+<style>
+    .word-of-interest {
+        display: inline-block;
+        transition: 0.2s ease-in-out;
+    }
+    .word-of-interest:hover {
+        text-decoration: underline;
+        font-size: 2.05em;
+    }
+
+</style>
