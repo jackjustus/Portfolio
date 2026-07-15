@@ -5,6 +5,7 @@
 }
 
 body {
-    background: var(--color-bg);
-    color: var(--color-text-primary);
+    margin: 0
+    /*background: var(--color-bg);*/
+    /*color: var(--color-text-primary);*/
 }

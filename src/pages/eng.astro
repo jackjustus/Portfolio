@@ -1,31 +1,63 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Greeter from '../components/Greeter.astro';
+import Title from "../components/eng/Title.astro";
 ---
 
 <Layout title="jack justus engineering">
-	<!--<Greeter title="jack justus engineering"></Greeter>-->
-	<p>
-		jack justus engineering
-	</p>
+	<div class="eng">
+		<Title/>
+		<div class="body-container">
+			<h2>
+				Projects
+			</h2>
+			<h3>
+			<div>
+				<h3>
+					Ride Engineering Competition
+				</h3>
+				<p>
+					The ride engineering competition is a competition where teams from around the country build a model amuesment ride of there own design with fully built out moving components, electronics, and control software.
+				</p>
+			</div>
+			<div>
+				<h3>
+					Digits
+				</h3>
+				<p>
+
+				</p>
+			</div>
+		</div>
+	</div>
 	<style>
-		p {
+		.eng :global(p) {
 			color: #714b4b;
 		}
-		h1 {
+		/*noinspection CssUnresolvedCustomProperty*/
+		.eng :global(h1)  {
 			font-family: var(--work-sans), sans-serif;
 			font-weight: bolder;
-			margin: 8px;
-
+			margin: 0;
+			padding: 8px 8px 8px 16px;
 		}
-		p {
+		.eng :global(p)  {
+			color: #555555;
 			margin-top: 0;
 			margin-bottom: 8px;
 		}
 		/*noinspection CssUnresolvedCustomProperty*/
-		body {
+		.eng :global(body),
+		.eng {
+			min-height: 100vh;
+			background-color: #E0EFEF;
 			font-family: var(--libre-baskerville), serif;
 			cursor: default;
+		}
+
+		.body-container {
+			//background-color: #000;
+			margin: 0 16px;
+			height: 200vh;
 		}
 	</style>
 </Layout>

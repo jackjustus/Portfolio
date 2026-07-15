@@ -6,6 +6,9 @@ import vue from '@astrojs/vue';
 // https://astro.build/config
 export default defineConfig({
   integrations: [vue()],
+  server: {
+    port: 8000,
+  },
   fonts: [
     {
       provider: fontProviders.google(),
