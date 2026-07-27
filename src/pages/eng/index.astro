@@ -1,0 +1,34 @@
+---
+import EngLayout from '../../layouts/EngLayout.astro';
+import Title from "../../components/eng/Title.astro";
+import ProjectCard from "../../components/eng/ProjectCard.astro";
+---
+
+<EngLayout title="jack justus engineering">
+	<div class="eng">
+		<Title/>
+		<div class="body-container">
+			<h1>
+				PROJECTS
+			</h1>
+			<ProjectCard
+				title="This Website"
+				desc="This website is made with Astro, Vue, and 100% handwitten code. find out why..."
+				slug="website"
+			/>
+			<ProjectCard
+				title="Ride Engineering Competition"
+				desc="The ride engineering competition is a competition where teams from around the country build a model amuesment ride of there own design with fully built out moving components, electronics, and control software"
+				slug="trec"
+			/>
+		</div>
+	</div>
+</EngLayout>
+
+<style>
+	.body-container {
+		//background-color: #000;
+		margin: 0 16px;
+		height: 200vh;
+	}
+</style>

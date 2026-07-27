@@ -1,0 +1,47 @@
+---
+import Layout from './Layout.astro';
+const { title } = Astro.props;
+---
+<Layout title={title}>
+    <div class="eng"><slot /></div>
+</Layout>
+
+/*noinspection CssUnresolvedCustomProperty*/
+<style is:global>
+  .eng p {
+      color: #714b4b;
+  }
+  .eng h1  {
+      font-family: var(--work-sans), sans-serif;
+      font-weight: bolder;
+      margin: 0;
+      font-size: x-large;
+      padding: 8px 8px 8px 8px;
+  }
+  .eng h2  {
+      font-family: var(--libre-baskerville), serif;
+      font-weight: bolder;
+      margin: 0;
+      font-size: xx-large;
+      padding: 8px 8px;
+  }
+  .eng h3  {
+      font-family: var(--work-sans), sans-serif;
+      font-weight: bolder;
+      margin: 0;
+      font-size: large;
+      padding: 8px 8px;
+  }
+  .eng p  {
+      color: #555555;
+      margin: 8px
+  }
+  .eng {
+      min-height: 100vh;
+      font-family: var(--libre-baskerville), serif;
+      cursor: default;
+  }
+  html {
+      background-color: #E0EFEF;
+  }
+</style>
