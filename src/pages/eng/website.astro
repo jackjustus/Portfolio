@@ -1,10 +1,15 @@
 ---
 import EngLayout from '../../layouts/EngLayout.astro'
 import {fade} from "astro:transitions"
+import Prose from '../../content/eng/website.md'
 ---
 
 <EngLayout>
-  <h2 transition:name={`project-title-website`}>
-    This Website
-  </h2>
+  <div>
+    <h2 transition:name={`project-title-website`}>
+      This Website
+    </h2>
+  </div>
+
+  <Prose />
 </EngLayout>
