@@ -3,19 +3,13 @@
 ---
 
 <div>
-  <slot class="test"/>
+  <slot />
 </div>
 
 <style>
   div {
       display: flex;
-      grid-template-columns: repeat(auto-fit, minmax(20ch, 1fr));
       gap: 1rem;
-
-      //overflow: hidden;
-      object-fit: cover;
-  }
-  .test div {
-    display: block;
+    flex-wrap: wrap;
   }
 </style>
