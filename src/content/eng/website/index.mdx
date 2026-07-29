@@ -1,0 +1,41 @@
+import { Image } from 'astro:assets'
+import astroLogo from './astro-logo.png'
+import Figure from '../../../components/eng/Figure.astro'
+import Gallery from '../../../components/eng/Gallery.astro'
+
+## Prose
+
+### Why did I decide to make my own website?
+well i got an email last week from squarespace saying that they are going to charge me 
+~$300 to renew for another year.. so i figured why not make this a learning opportunity.
+
+### Why not use AI to make it?
+I use AI a ton on work and other personal projects, so learning something from the ground 
+using documentation felt like a refreshing idea. It's also not to say that I didn't use AI 
+as a learning tool, but all of the code is written by hand.
+
+### This website feels really empty..
+Squarespace only gave me 15 days notice, so not really my fault... working on moving things over. 
+Not like anyone actually gaf abt this.
+I also have been trying to focus on getting a small workable version shipped and make incremental
+improvements, as building that muscle is good.
+
+## Tech Stack
+
+This website is currently just a static site built using **Astro**, and services by the free 
+cloudflare pages service which integrates with CI on GitHub. I plan to add a backend to do 
+analytics tracking, hopefully using some of the database skills i spent so long learning in 
+the spring 2026 semester.
+
+I also have Vue installed, however haven't found a usecase for JS just yet. 
+I figure when i get to building out some more complex things, 
+like a contact me form or some fun interactive components, I'll get there.
+This is also my first ever website, so there is def a learning curve before I get started on 
+those shenanigans.
+
+I figure I'll throw some images here to make this look more filled out.
+<Gallery>
+    <Figure path={astroLogo} alt={"Astro's logo"}/>
+    <Figure path={astroLogo} alt={"Astro's logo"}/>
+    <Figure path={astroLogo} alt={"Astro's logo"}/>
+</Gallery>

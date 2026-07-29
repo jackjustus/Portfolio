@@ -10,7 +10,8 @@ const { title } = Astro.props;
 <style is:global>
   .eng p {
       color: #555555;
-      margin: 8px
+      margin-block: 0.4rem 1rem;
+      margin-inline: 0.5rem;
   }
   .eng h1  {
       font-family: var(--work-sans), sans-serif;
@@ -22,16 +23,17 @@ const { title } = Astro.props;
   .eng h2  {
       font-family: var(--libre-baskerville), serif;
       font-weight: bolder;
-      margin: 0;
+      margin-block: 2rem 1rem;
+      margin-inline: 0.5rem;
       font-size: xx-large;
-      padding: 8px 8px;
   }
-  .eng h3  {
+  .eng h3 {
       font-family: var(--work-sans), sans-serif;
       font-weight: bolder;
       margin: 0;
       font-size: large;
-      padding: 8px 8px;
+      margin-block: 0 0;
+      margin-inline: 0.5rem;
   }
   .eng {
       min-height: 100vh;

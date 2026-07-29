@@ -1,15 +1,30 @@
 ---
 import EngLayout from '../../layouts/EngLayout.astro'
 import {fade} from "astro:transitions"
-import Prose from '../../content/eng/website.md'
+import Prose from '../../content/eng/website/index.mdx'
 ---
 
 <EngLayout>
-  <div>
-    <h2 transition:name={`project-title-website`}>
+  <div class="header-container">
+    <h2 transition:name={`project-title-website`} class="header-text">
       This Website
     </h2>
+    <hr class="header-bar"/>
   </div>
-
-  <Prose />
+  <div class="prose-container">
+    <Prose />
+  </div>
 </EngLayout>
+<style>
+  .header-container {
+    padding: 2rem;
+  }
+  .header-text {
+    padding: 0 1rem;
+  }
+  .prose-container {
+    //padding: 0 100px;
+    max-width: 75ch;
+    margin-inline: auto;
+  }
+</style>

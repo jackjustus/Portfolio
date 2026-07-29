@@ -1,0 +1,16 @@
+---
+const { path, alt } = Astro.props
+import { Image } from 'astro:assets'
+---
+<figure>
+  <Image class="img"
+      src={path}
+      alt={alt}
+  />
+</figure>
+
+<style>
+  //.img {
+  //  display: block;
+  //}
+</style>
