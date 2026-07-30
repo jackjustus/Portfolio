@@ -1,8 +1,15 @@
 ---
 const {title, desc, slug} = Astro.props
+interface Props {
+  title: string;
+  desc: string;
+  slug?: string;
+}
+const comingSoon = !slug
+const Tag = comingSoon ? 'div' : 'a'
 import {fade} from "astro:transitions"
 ---
-<a class="card" href={`/eng/${slug}`}>
+<Tag class="card" href={`/eng/${slug}`}>
   <div class="inner">
     <div>
       <h2 transition:name={`project-title-${slug}`} class="card-title">
@@ -16,12 +23,21 @@ import {fade} from "astro:transitions"
     <!--  ↗-->
     <!--</p>-->
   </div>
-</a>
+  {comingSoon &&
+      <div class="overlay">
+        <h1 class="overlay-text">
+          COMING SOON
+        </h1>
+      </div>
+  }
+
+</Tag>
 
 
 <style>
   .card {
     display: block;
+    position: relative;
     color: inherit;
     text-decoration: none;
     margin: 1rem 0;
@@ -31,7 +47,6 @@ import {fade} from "astro:transitions"
     outline: 2px solid #FFFFFF;
   }
   .card:hover {
-      transform: scale(1.00);
       box-shadow: 0 0 20px rgba(0,0,0,.1);
       background-color: #FFFFFF;
   }
@@ -41,6 +56,27 @@ import {fade} from "astro:transitions"
   .inner {
       display: flex;
       justify-content: space-between;
+  }
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    background: rgba(255,255,255,0);
+    border-radius: inherit;
+    transition: all .4s ease;
+
+  }
+  .overlay:hover {
+    opacity: 100;
+    backdrop-filter: blur(16px);
+    background: rgba(255,255,255,.5);
+  }
+  .overlay-text {
+    padding: 0;
+    margin: 0;
   }
   //.arrow {
   //    font-size: x-large;
