@@ -3,17 +3,17 @@ import Layout from './Layout.astro';
 const { title } = Astro.props;
 ---
 <Layout title={title}>
-    <div class="eng"><slot /></div>
+    <div class="lx"><slot /></div>
 </Layout>
 
 <style is:global>
-  .eng p {
+  .lx p {
       color: #555555;
       margin-block: 0.4rem 1rem;
       margin-inline: 0.5rem;
   }
   /*noinspection CssUnresolvedCustomProperty*/
-  .eng h1  {
+  .lx h1  {
       font-family: var(--work-sans), sans-serif;
       font-weight: bolder;
       padding: 0;
@@ -21,7 +21,7 @@ const { title } = Astro.props;
       margin: 8px 8px 8px 8px;
   }
   /*noinspection CssUnresolvedCustomProperty*/
-  .eng h2  {
+  .lx h2  {
       font-family: var(--libre-baskerville), serif;
       font-weight: bolder;
       margin-block: 2rem 1rem;
@@ -29,7 +29,7 @@ const { title } = Astro.props;
       font-size: xx-large;
   }
   /*noinspection CssUnresolvedCustomProperty*/
-  .eng h3 {
+  .lx h3 {
       font-family: var(--work-sans), sans-serif;
       font-weight: bolder;
       margin: 0;
@@ -38,7 +38,7 @@ const { title } = Astro.props;
       margin-inline: 0.5rem;
   }
   /*noinspection CssUnresolvedCustomProperty*/
-  .eng {
+  .lx {
       min-height: 100vh;
       font-family: var(--libre-baskerville), serif;
       cursor: default;
