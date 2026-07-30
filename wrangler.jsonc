@@ -1,6 +1,6 @@
 {
   "observability": {
-    "enabled": false,
+    "enabled": true,
     "head_sampling_rate": 1,
     "logs": {
       "enabled": true,
@@ -24,5 +24,8 @@
     "preview": {
       "name": "portfolio-staging"
     }
-  }
+  },
+  "analytics_engine_datasets": [
+    { "binding": "ANALYTICS_ENGINE", "dataset": "analytics" }
+  ]
 }
