@@ -1,0 +1,157 @@
+---
+import {cdn, srcset} from "../../scripts/cdn.ts";
+
+const DIR = 'lx/2026_connection_pointe_easter';
+
+/* Sources are 2:3 (Vert*) and 3:2 (Horz*). Cells are 2:3, so verticals sit
+   uncropped; a horizontal spans two columns, landing at 4:3 against its native
+   3:2 — about 11% crop.
+
+   Order below is pure curation. The strip flows top-to-bottom then left-to-right,
+   so the first entries are what's on screen before anyone scrolls. Every
+   uncommented tile renders — the list length is the length of the reel. */
+const tiles = [
+    // { file: 'CPEasterHorzWht1.jpg',     alt: 'Wide stage in a white wash' },
+    // { file: 'CPEasterVertWarm3.jpg',    alt: 'Warm wash, third look' }, // REPLACE
+    // { file: 'CPEasterHorzWht2.jpg',     alt: 'Wide white-lit stage, second look' },
+    { file: 'CPEasterVertRed1.jpg',     alt: 'Red uplight on the set' },
+    // { file: 'CPEasterVertWarm1.jpg',    alt: 'Warm amber front light' },
+    { file: 'CPEasterHorzCold1.jpg',    alt: 'Wide stage in a cold wash' },
+
+    { file: 'CPEasterVertBlue1.jpg',    alt: 'Saturated blue vertical beams' },
+    { file: 'CPEasterVertWht1.png',     alt: 'White key light on the stage' },
+    //
+    { file: 'CPEasterVertCold2.jpg',    alt: 'Cold wash, second look' },
+    // { file: 'CPEasterVertPurple1.jpg',  alt: 'Purple wash with haze' },
+    { file: 'CPEasterHorzRed1.jpg',     alt: 'Wide stage in deep red' },
+    { file: 'CPEasterVertWht2.jpg',     alt: 'White wash, second look' },
+    // { file: 'CPEasterVertWarm2.jpg',    alt: 'Warm wash, second look' },
+    { file: 'CPEasterVertOrang1.png',   alt: 'Orange wash across the rig' },
+    //
+    // { file: 'CPEasterVertRed2.jpg',     alt: 'Red beams, second look' },
+    { file: 'CPEasterVertWht5.png',     alt: 'White wash, third look' },
+    // { file: 'CPEasterVertCold3.jpg',    alt: 'Cold wash, third look' },
+    { file: 'CPEasterVertCold1.jpg',    alt: 'Cold blue wash across the upstage rig' },
+    { file: 'CPEasterVertRed3.jpg',     alt: 'Red beams, third look' },
+    //
+    // { file: 'CPEasterVertCold4.jpg',    alt: 'Cold wash, fourth look' },
+    // { file: 'CPEasterHorzMessage1.jpg', alt: 'Wide stage during the message' },
+    { file: 'CPEasterVertWht6.jpg',     alt: 'White wash, fourth look' },
+    { file: 'CPEasterVertCold5.jpg',    alt: 'Cold wash, fifth look' },
+    //MAYBE { file: 'CPEasterVertWht7.jpg',     alt: 'White wash, fifth look' },
+    { file: 'CPEasterVertCold6.jpg',    alt: 'Cold wash, sixth look' },
+    //
+    { file: 'CPEasterHorzWarm1.jpg',    alt: 'Wide stage in warm amber' },
+    { file: 'CPEasterHorzRed2.jpg',     alt: 'Wide red stage, second look' },
+    { file: 'CPEasterHorzWht3.jpg',     alt: 'Wide white-lit stage, third look' },
+    { file: 'CPEasterHorzWht4.jpg',     alt: 'Wide white-lit stage, fourth look' },
+    { file: 'CPEasterHorzWht5.jpg',     alt: 'Wide white-lit stage, fifth look' },
+    // { file: 'CPEasterHorzWht6.jpg',     alt: 'Wide white-lit stage, sixth look' },
+    // { file: 'CPEasterVertWht8.jpg',     alt: 'White wash, sixth look' },
+    { file: 'CPEasterVertWht9.jpg',     alt: 'White wash, seventh look' },
+];
+
+const rendered = tiles.map((t) => ({
+    ...t,
+    wide: t.file.includes('Horz'),
+    path: `${DIR}/${t.file}`,
+}));
+
+/* Three rows, so the strip is slots/3 columns wide. A total that isn't a
+   multiple of 3 leaves the final column short — a notch at the end of the reel. */
+const slots = rendered.reduce((n, t) => n + (t.wide ? 2 : 1), 0);
+if (slots % 3) console.warn(`[Gallery] ${slots} slots is not a multiple of 3 — last column will be short`);
+---
+
+<section class="stage">
+    <div class="reel">
+        <div class="gallery">
+            {rendered.map((t, i) => (
+                <img
+                    src={cdn(t.path, t.wide ? 600 : 400)}
+                    srcset={srcset(t.path, t.wide ? [600, 1200] : [400, 800])}
+                    sizes={t.wide ? '45vh' : '22vh'}
+                    alt={t.alt}
+                    loading={i < 9 ? 'eager' : 'lazy'}
+                    fetchpriority="low"
+                    decoding="async"
+                    class={t.wide ? 'tile wide' : 'tile'}
+                />
+            ))}
+        </div>
+    </div>
+    <!--<div class="title-card"><slot /></div>-->
+</section>
+
+<style>
+    /* The surface that will pin. `.reel` and `.title-card` stack in one grid
+       area so the card can overlay the strip — and the card must stay a sibling
+       of `.reel`, not a child, since sticky inside a scroll container resolves
+       against that container instead of the viewport. */
+    .stage {
+        height: 100vh;
+        display: grid;
+        grid-template-areas: "stack";
+        background-color: #0F0F0F;
+    }
+
+    .reel,
+    .title-card {
+        grid-area: stack;
+    }
+
+    /* overscroll-behavior-x stops a horizontal flick at either end from
+       triggering browser back/forward on a trackpad. */
+    .reel {
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-x: contain;
+    }
+
+    /* Rows are 1fr so they fill the reel's real content height even when a
+       classic scrollbar eats ~15px of it. Column width is computed from 100vh
+       instead, which is what fixes the 2:3 cell aspect. Reusing one variable
+       across both axes doesn't work: a percentage in grid-auto-columns resolves
+       against the container's width, not its height. */
+    .gallery {
+        --gap: 2px;
+        --col: calc((100vh - 2 * var(--gap)) / 3 * 2 / 3);
+        display: grid;
+        grid-template-rows: repeat(3, 1fr);
+        grid-auto-flow: column;
+        grid-auto-columns: var(--col);
+        gap: var(--gap);
+        width: max-content;
+        height: 100%;
+    }
+
+    .tile {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background-color: #1a1a1a;
+    }
+
+    .wide {
+        grid-column: span 2;
+    }
+
+    /* radial scrim keeps the text legible over the lit photographs */
+    .title-card {
+        place-self: center;
+        z-index: 1;
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #f3ede5;
+        background: radial-gradient(ellipse at center, rgb(15 15 15 / 0.85) 0%, rgb(15 15 15 / 0) 70%);
+    }
+
+    /* slotted content carries the parent page's scope, so reach it globally
+       and outrank the .lx p / .lx h2 rules from LxLayout */
+    .title-card :global(h2),
+    .title-card :global(p) {
+        color: #f3ede5;
+        margin-inline: 0;
+    }
+</style>

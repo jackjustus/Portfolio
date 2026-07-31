@@ -1,0 +1,65 @@
+---
+import {cdn, lqip, srcset} from "../../scripts/cdn.ts";
+const imgPath = "lx/2026_connection_pointe_easter/HERO.jpeg"
+const blur = await lqip(imgPath)
+---
+
+<div class="container">
+  <img
+      src={cdn(imgPath, 1920)}
+      srcset={srcset(imgPath, [960, 1280, 1920, 2560])}
+      alt="Connection Pointe Easter 2026"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+      class="image"
+  />
+  <div class="hero-blur" style={blur ? `background-image:url(${blur})` : undefined}/>
+</div>
+
+<style>
+    .container {
+        position: relative;
+        height: 100vh;
+        overflow: hidden;
+    }
+    .image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .hero-blur {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-color: #0F0F0F;
+      filter: blur(24px);
+      transform: scale(1.1);
+      transition: opacity 0.5s ease-out;
+    }
+    .container.loaded .hero-blur {
+      opacity: 0;
+    }
+</style>
+
+<script>
+  function initHero() {
+    const container = document.querySelector<HTMLElement>('.container');
+    const img = document.querySelector<HTMLImageElement>('.image');
+    if (!container || !img) return;
+
+    img.decode()
+        .catch(() => {})
+        .finally(() => container.classList.add('loaded'));
+  }
+
+  document.addEventListener('astro:page-load', initHero);
+</script>
+
+<!--disable blur if ts can't load-->
+<noscript>
+  <style is:inline>
+    .hero-blur {display: none}
+  </style>
+</noscript>

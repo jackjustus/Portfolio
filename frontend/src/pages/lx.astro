@@ -2,35 +2,37 @@
 import Layout from '../layouts/Layout.astro';
 import Greeter from '../components/index/Greeter.js';
 import LxLayout from "../layouts/LxLayout.astro";
+import HeroImg from "../components/lx/HeroImg.astro";
+import Gallery from "../components/lx/Gallery.astro";
 ---
 
 <LxLayout title="Jack's Blog">
-	<!--<Greeter title="jack justus design"></Greeter>-->
-	<div class="lx">
-		<p>
-			jack justus lighting design
-		</p>
-	</div>
-	<style>
-		.lx :global(p) {
-			color: #714b4b;
-		}
-		/*noinspection CssUnresolvedCustomProperty*/
-		.lx :global(h1)  {
-			font-family: var(--work-sans), sans-serif;
-			font-weight: bolder;
-			margin: 8px;
-
-		}
-		.lx :global(p)  {
-			margin-top: 0;
-			margin-bottom: 8px;
-		}
-		/*noinspection CssUnresolvedCustomProperty*/
-		.lx :global(body),
-		.lx {
-			font-family: var(--libre-baskerville), serif;
-			cursor: default;
-		}
-	</style>
+	<HeroImg />
+	<Gallery>
+		<h2>Connection Pointe</h2>
+		<p>Easter 2026</p>
+	</Gallery>
 </LxLayout>
+
+<style>
+	.lx :global(p) {
+		color: #714b4b;
+	}
+	/*noinspection CssUnresolvedCustomProperty*/
+	.lx :global(h1)  {
+		font-family: var(--work-sans), sans-serif;
+		font-weight: bolder;
+		margin: 8px;
+
+	}
+	.lx :global(p)  {
+		margin-top: 0;
+		margin-bottom: 8px;
+	}
+	/*noinspection CssUnresolvedCustomProperty*/
+	.lx :global(body),
+	.lx {
+		font-family: var(--libre-baskerville), serif;
+		cursor: default;
+	}
+</style>
