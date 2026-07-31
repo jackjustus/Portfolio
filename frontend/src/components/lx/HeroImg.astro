@@ -1,0 +1,90 @@
+---
+const imgPath = "lx/2026_connection_pointe_easter/HERO.jpeg"
+const cdn = (path: string, width: number, opts = 'format=auto,quality=85') =>
+    `https://static.jackjust.com/cdn-cgi/image/width=${width},${opts}/${path}`;
+
+const srcset = (path: string, widths: number[]) =>
+    widths.map((w) => `${cdn(path, w)} ${w}w`).join(', ');
+
+const cache = new Map<string, string>();
+const blur = await lqip(imgPath)
+
+async function lqip(path: string): Promise<string> {
+    const hit = cache.get(path);
+    if (hit !== undefined) return hit;
+
+    let uri = '';
+    try {
+        const res = await fetch(cdn(path, 24, 'format=webp,quality=30'));
+        if (res.ok) {
+            const bytes = new Uint8Array(await res.arrayBuffer());
+            uri = `data:image/webp;base64,${btoa(String.fromCharCode(...bytes))}`;
+        }
+    } catch {
+        // leave empty — the CSS background-color is the fallback
+    }
+
+    cache.set(path, uri);
+    return uri;
+}
+---
+
+<div class="container">
+  <img
+      src={cdn(imgPath, 1920)}
+      srcset={srcset(imgPath, [960, 1280, 1920, 2560])}
+      alt="Connection Pointe Easter 2026"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+      class="image"
+  />
+  <div class="hero-blur" style={blur ? `background-image:url(${blur})` : undefined}/>
+</div>
+
+<style>
+    .container {
+        position: relative;
+        height: 100vh;
+        overflow: hidden;
+    }
+    .image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .hero-blur {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-color: #0F0F0F;
+      filter: blur(24px);
+      transform: scale(1.1);
+      transition: opacity 0.5s ease-out;
+    }
+    .container.loaded .hero-blur {
+      opacity: 0;
+    }
+</style>
+
+<script>
+  function initHero() {
+    const container = document.querySelector<HTMLElement>('.container');
+    const img = document.querySelector<HTMLImageElement>('.image');
+    if (!container || !img) return;
+
+    img.decode()
+        .catch(() => {})
+        .finally(() => container.classList.add('loaded'));
+  }
+
+  document.addEventListener('astro:page-load', initHero);
+</script>
+
+<!--disable blur if ts can't load-->
+<noscript>
+  <style is:inline>
+    .hero-blur {display: none}
+  </style>
+</noscript>
