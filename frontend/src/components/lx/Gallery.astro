@@ -8,80 +8,94 @@ const DIR = 'lx/2026_connection_pointe_easter';
    box holds them at ~25% crop and reads as a wide shot rather than a
    mangled one.
 
-   One horizontal (2 slots) + five verticals (5 slots) = 7 slots = one desktop
-   row, so the 7-wide grid tiles exactly with no holes. The horizontal sits at
-   a different column in each row so they scatter rather than form a stripe —
-   never later than column 6, or it would wrap and leave a gap. */
+   Order below is pure curation — `pack` works out the columns. Tiles past the
+   grid's capacity are never rendered, so the tail of the list acts as spares. */
 const tiles = [
-    /* row 1 — wide at col 1 */
-    { file: 'CPEasterHorzWht1.jpg',     alt: 'Wide stage in a white wash' },
-    { file: 'CPEasterVertCold1.jpg',    alt: 'Cold blue wash across the upstage rig' },
+    // { file: 'CPEasterHorzWht1.jpg',     alt: 'Wide stage in a white wash' },
+    // { file: 'CPEasterVertWarm3.jpg',    alt: 'Warm wash, third look' }, // REPLACE
+    // { file: 'CPEasterHorzWht2.jpg',     alt: 'Wide white-lit stage, second look' },
     { file: 'CPEasterVertRed1.jpg',     alt: 'Red uplight on the set' },
-    { file: 'CPEasterVertWarm1.jpg',    alt: 'Warm amber front light' },
+    // { file: 'CPEasterVertWarm1.jpg',    alt: 'Warm amber front light' },
+    { file: 'CPEasterHorzCold1.jpg',    alt: 'Wide stage in a cold wash' },
+
     { file: 'CPEasterVertBlue1.jpg',    alt: 'Saturated blue vertical beams' },
     { file: 'CPEasterVertWht1.png',     alt: 'White key light on the stage' },
-
-    /* row 2 — wide at col 3 */
+    //
     { file: 'CPEasterVertCold2.jpg',    alt: 'Cold wash, second look' },
-    { file: 'CPEasterVertPurple1.jpg',  alt: 'Purple wash with haze' },
+    // { file: 'CPEasterVertPurple1.jpg',  alt: 'Purple wash with haze' },
     { file: 'CPEasterHorzRed1.jpg',     alt: 'Wide stage in deep red' },
     { file: 'CPEasterVertWht2.jpg',     alt: 'White wash, second look' },
-    { file: 'CPEasterVertWarm2.jpg',    alt: 'Warm wash, second look' },
+    // { file: 'CPEasterVertWarm2.jpg',    alt: 'Warm wash, second look' },
     { file: 'CPEasterVertOrang1.png',   alt: 'Orange wash across the rig' },
-
-    /* row 3 — wide at col 5 */
-    { file: 'CPEasterVertRed2.jpg',     alt: 'Red beams, second look' },
+    //
+    // { file: 'CPEasterVertRed2.jpg',     alt: 'Red beams, second look' },
     { file: 'CPEasterVertWht5.png',     alt: 'White wash, third look' },
-    { file: 'CPEasterVertCold3.jpg',    alt: 'Cold wash, third look' },
-    { file: 'CPEasterVertWarm3.jpg',    alt: 'Warm wash, third look' },
-    { file: 'CPEasterHorzCold1.jpg',    alt: 'Wide stage in a cold wash' },
+    // { file: 'CPEasterVertCold3.jpg',    alt: 'Cold wash, third look' },
+    { file: 'CPEasterVertCold1.jpg',    alt: 'Cold blue wash across the upstage rig' },
     { file: 'CPEasterVertRed3.jpg',     alt: 'Red beams, third look' },
-
-    /* row 4 — wide at col 2 */
-    { file: 'CPEasterVertCold4.jpg',    alt: 'Cold wash, fourth look' },
-    { file: 'CPEasterHorzMessage1.jpg', alt: 'Wide stage during the message' },
+    //
+    // { file: 'CPEasterVertCold4.jpg',    alt: 'Cold wash, fourth look' },
+    // { file: 'CPEasterHorzMessage1.jpg', alt: 'Wide stage during the message' },
     { file: 'CPEasterVertWht6.jpg',     alt: 'White wash, fourth look' },
     { file: 'CPEasterVertCold5.jpg',    alt: 'Cold wash, fifth look' },
-    { file: 'CPEasterVertWht7.jpg',     alt: 'White wash, fifth look' },
+    //MAYBE { file: 'CPEasterVertWht7.jpg',     alt: 'White wash, fifth look' },
     { file: 'CPEasterVertCold6.jpg',    alt: 'Cold wash, sixth look' },
-
-    /* spares — not rendered */
+    //
     { file: 'CPEasterHorzWarm1.jpg',    alt: 'Wide stage in warm amber' },
     { file: 'CPEasterHorzRed2.jpg',     alt: 'Wide red stage, second look' },
-    { file: 'CPEasterHorzWht2.jpg',     alt: 'Wide white-lit stage, second look' },
     { file: 'CPEasterHorzWht3.jpg',     alt: 'Wide white-lit stage, third look' },
     { file: 'CPEasterHorzWht4.jpg',     alt: 'Wide white-lit stage, fourth look' },
     { file: 'CPEasterHorzWht5.jpg',     alt: 'Wide white-lit stage, fifth look' },
-    { file: 'CPEasterHorzWht6.jpg',     alt: 'Wide white-lit stage, sixth look' },
-    { file: 'CPEasterVertWht8.jpg',     alt: 'White wash, sixth look' },
+    // { file: 'CPEasterHorzWht6.jpg',     alt: 'Wide white-lit stage, sixth look' },
+    // { file: 'CPEasterVertWht8.jpg',     alt: 'White wash, sixth look' },
     { file: 'CPEasterVertWht9.jpg',     alt: 'White wash, seventh look' },
 ];
 
-const RENDERED = 24;   /* 4 horizontals + 20 verticals = 28 slots at 7 cols x 4 rows */
-const TABLET_SLOTS = 20;   /* 4 cols x 5 rows */
-const MOBILE_VERTICALS = 8;   /* 2 cols x 4 rows — horizontals are hidden here,
-                                 a 2-slot span can't tile 2 columns evenly */
+/* Greedy row packer. Walks the curated order and drops each tile into the next
+   free cell; a wide tile needs two free columns, so when only the last column of
+   a row is open it is held back and the next narrow tile takes that cell — the
+   wide then lands at the head of the following row. The grid stays hole-free
+   whatever order the tiles are in, and no horizontal is pinned to a column. */
+function pack<T extends { wide: boolean }>(list: T[], cols: number, rows: number): T[] {
+    const capacity = cols * rows;
+    const out: T[] = [];
+    const held: T[] = [];
+    let used = 0;
 
-let slots = 0;
-let verticals = 0;
-
-const rendered = tiles.slice(0, RENDERED).map((t) => {
-    const wide = t.file.includes('Horz');
-    slots += wide ? 2 : 1;
-    return {
-        ...t,
-        wide,
-        path: `${DIR}/${t.file}`,
-        onMobile: !wide && verticals++ < MOBILE_VERTICALS,
-        onTablet: slots <= TABLET_SLOTS,
+    const place = (t: T) => {
+        const span = t.wide ? 2 : 1;
+        if (used + span > capacity) return false;
+        if (span === 2 && used % cols === cols - 1) return false;   // would straddle a row edge
+        out.push(t);
+        used += span;
+        return true;
     };
-});
+
+    for (const t of list) {
+        if (used === capacity) break;
+        while (held.length && place(held[0])) held.shift();
+        if (!place(t) && t.wide) held.push(t);
+    }
+    return out;
+}
+
+const all = tiles.map((t) => ({
+    ...t,
+    wide: t.file.includes('Horz'),
+    path: `${DIR}/${t.file}`,
+}));
+
+/* Each breakpoint packs the one above it, so mobile ⊆ tablet ⊆ desktop — the
+   media queries stack, and a tile hidden at 1100px must stay hidden at 700px. */
+const rendered = pack(all, 7, 4);
+const tablet = new Set(pack(rendered, 4, 5));
+const mobile = new Set(pack([...tablet], 2, 4));
 
 const classes = (t: typeof rendered[number]) => [
     'tile',
     t.wide ? 'wide' : '',
-    t.onMobile ? '' : 'hide-mobile',
-    t.onTablet ? '' : 'hide-tablet',
+    mobile.has(t) ? '' : 'hide-mobile',
+    tablet.has(t) ? '' : 'hide-tablet',
 ].filter(Boolean).join(' ');
 ---
 
@@ -92,17 +106,17 @@ const classes = (t: typeof rendered[number]) => [
                 src={cdn(t.path, t.wide ? 600 : 400)}
                 srcset={srcset(t.path, t.wide ? [600, 1200] : [400, 800])}
                 sizes={t.wide
-                    ? '(max-width: 1100px) 50vw, 28vw'
+                    ? '(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 28vw'
                     : '(max-width: 700px) 50vw, (max-width: 1100px) 25vw, 14vw'}
                 alt={t.alt}
-                loading={t.onMobile ? 'eager' : 'lazy'}
+                loading={mobile.has(t) ? 'eager' : 'lazy'}
                 fetchpriority="low"
                 decoding="async"
                 class={classes(t)}
             />
         ))}
     </div>
-    <div class="title-card"><slot /></div>
+    <!--<div class="title-card"><slot /></div>-->
 </section>
 
 <style>
@@ -129,7 +143,7 @@ const classes = (t: typeof rendered[number]) => [
         --cell: calc((max(100vw, 175vh) - 12px) / 7);
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        grid-auto-flow: row dense;   /* backfills if a 2-slot tile can't end a row */
+        grid-auto-flow: row;   /* `pack` guarantees alignment, so a gap here is a bug, not something to backfill */
         width: max(100vw, 175vh);
         gap: 2px;
         filter: brightness(0.75);
