@@ -3,13 +3,13 @@ import {cdn, srcset} from "../../scripts/cdn.ts";
 
 const DIR = 'lx/2026_connection_pointe_easter';
 
-/* Sources are 2:3 (Vert*) and 3:2 (Horz*). A 3:2 landscape in a square cell
-   is cropped to a third of its width, so horizontals span 2 columns: a 2:1
-   box holds them at ~25% crop and reads as a wide shot rather than a
-   mangled one.
+/* Sources are 2:3 (Vert*) and 3:2 (Horz*). Cells are 2:3, so verticals sit
+   uncropped; a horizontal spans two columns, landing at 4:3 against its native
+   3:2 — about 11% crop.
 
-   Order below is pure curation — `pack` works out the columns. Tiles past the
-   grid's capacity are never rendered, so the tail of the list acts as spares. */
+   Order below is pure curation. The strip flows top-to-bottom then left-to-right,
+   so the first entries are what's on screen before anyone scrolls. Every
+   uncommented tile renders — the list length is the length of the reel. */
 const tiles = [
     // { file: 'CPEasterHorzWht1.jpg',     alt: 'Wide stage in a white wash' },
     // { file: 'CPEasterVertWarm3.jpg',    alt: 'Warm wash, third look' }, // REPLACE
@@ -51,108 +51,84 @@ const tiles = [
     { file: 'CPEasterVertWht9.jpg',     alt: 'White wash, seventh look' },
 ];
 
-/* Greedy row packer. Walks the curated order and drops each tile into the next
-   free cell; a wide tile needs two free columns, so when only the last column of
-   a row is open it is held back and the next narrow tile takes that cell — the
-   wide then lands at the head of the following row. The grid stays hole-free
-   whatever order the tiles are in, and no horizontal is pinned to a column. */
-function pack<T extends { wide: boolean }>(list: T[], cols: number, rows: number): T[] {
-    const capacity = cols * rows;
-    const out: T[] = [];
-    const held: T[] = [];
-    let used = 0;
-
-    const place = (t: T) => {
-        const span = t.wide ? 2 : 1;
-        if (used + span > capacity) return false;
-        if (span === 2 && used % cols === cols - 1) return false;   // would straddle a row edge
-        out.push(t);
-        used += span;
-        return true;
-    };
-
-    for (const t of list) {
-        if (used === capacity) break;
-        while (held.length && place(held[0])) held.shift();
-        if (!place(t) && t.wide) held.push(t);
-    }
-    return out;
-}
-
-const all = tiles.map((t) => ({
+const rendered = tiles.map((t) => ({
     ...t,
     wide: t.file.includes('Horz'),
     path: `${DIR}/${t.file}`,
 }));
 
-/* Each breakpoint packs the one above it, so mobile ⊆ tablet ⊆ desktop — the
-   media queries stack, and a tile hidden at 1100px must stay hidden at 700px. */
-const rendered = pack(all, 7, 4);
-const tablet = new Set(pack(rendered, 4, 5));
-const mobile = new Set(pack([...tablet], 2, 4));
-
-const classes = (t: typeof rendered[number]) => [
-    'tile',
-    t.wide ? 'wide' : '',
-    mobile.has(t) ? '' : 'hide-mobile',
-    tablet.has(t) ? '' : 'hide-tablet',
-].filter(Boolean).join(' ');
+/* Three rows, so the strip is slots/3 columns wide. A total that isn't a
+   multiple of 3 leaves the final column short — a notch at the end of the reel. */
+const slots = rendered.reduce((n, t) => n + (t.wide ? 2 : 1), 0);
+if (slots % 3) console.warn(`[Gallery] ${slots} slots is not a multiple of 3 — last column will be short`);
 ---
 
 <section class="stage">
-    <div class="gallery">
-        {rendered.map((t) => (
-            <img
-                src={cdn(t.path, t.wide ? 600 : 400)}
-                srcset={srcset(t.path, t.wide ? [600, 1200] : [400, 800])}
-                sizes={t.wide
-                    ? '(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 28vw'
-                    : '(max-width: 700px) 50vw, (max-width: 1100px) 25vw, 14vw'}
-                alt={t.alt}
-                loading={mobile.has(t) ? 'eager' : 'lazy'}
-                fetchpriority="low"
-                decoding="async"
-                class={classes(t)}
-            />
-        ))}
+    <div class="reel">
+        <div class="gallery">
+            {rendered.map((t, i) => (
+                <img
+                    src={cdn(t.path, t.wide ? 600 : 400)}
+                    srcset={srcset(t.path, t.wide ? [600, 1200] : [400, 800])}
+                    sizes={t.wide ? '45vh' : '22vh'}
+                    alt={t.alt}
+                    loading={i < 9 ? 'eager' : 'lazy'}
+                    fetchpriority="low"
+                    decoding="async"
+                    class={t.wide ? 'tile wide' : 'tile'}
+                />
+            ))}
+        </div>
     </div>
     <!--<div class="title-card"><slot /></div>-->
 </section>
 
 <style>
-    /* One viewport tall, grid centred and clipped. Square cells, so the
-       7x4 grid covers the viewport exactly at any aspect ratio. */
+    /* The surface that will pin. `.reel` and `.title-card` stack in one grid
+       area so the card can overlay the strip — and the card must stay a sibling
+       of `.reel`, not a child, since sticky inside a scroll container resolves
+       against that container instead of the viewport. */
     .stage {
         height: 100vh;
-        overflow: hidden;
         display: grid;
         grid-template-areas: "stack";
-        place-content: center;
         background-color: #0F0F0F;
     }
 
-    .gallery,
+    .reel,
     .title-card {
         grid-area: stack;
     }
 
-    /* Width covers the viewport in both axes: at square the grid is cols/rows
-       wide per unit tall, so 7/4 -> 175vh. --cell is that width divided by the
-       column count (minus gaps), i.e. the height a square tile needs. */
+    /* overscroll-behavior-x stops a horizontal flick at either end from
+       triggering browser back/forward on a trackpad. */
+    .reel {
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-x: contain;
+    }
+
+    /* Rows are 1fr so they fill the reel's real content height even when a
+       classic scrollbar eats ~15px of it. Column width is computed from 100vh
+       instead, which is what fixes the 2:3 cell aspect. Reusing one variable
+       across both axes doesn't work: a percentage in grid-auto-columns resolves
+       against the container's width, not its height. */
     .gallery {
-        --cell: calc((max(100vw, 175vh) - 12px) / 7);
+        --gap: 2px;
+        --col: calc((100vh - 2 * var(--gap)) / 3 * 2 / 3);
         display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        grid-auto-flow: row;   /* `pack` guarantees alignment, so a gap here is a bug, not something to backfill */
-        width: max(100vw, 175vh);
-        gap: 2px;
-        filter: brightness(0.75);
+        grid-template-rows: repeat(3, 1fr);
+        grid-auto-flow: column;
+        grid-auto-columns: var(--col);
+        gap: var(--gap);
+        width: max-content;
+        height: 100%;
     }
 
     .tile {
         display: block;
         width: 100%;
-        height: var(--cell);
+        height: 100%;
         object-fit: cover;
         background-color: #1a1a1a;
     }
@@ -177,25 +153,5 @@ const classes = (t: typeof rendered[number]) => [
     .title-card :global(p) {
         color: #f3ede5;
         margin-inline: 0;
-    }
-
-    /* 4 cols x 5 rows -> 4/5 -> 80vh */
-    @media (max-width: 1100px) {
-        .gallery {
-            --cell: calc((max(100vw, 80vh) - 6px) / 4);
-            grid-template-columns: repeat(4, 1fr);
-            width: max(100vw, 80vh);
-        }
-        .hide-tablet { display: none; }
-    }
-
-    /* 2 cols x 4 rows -> 2/4 -> 50vh */
-    @media (max-width: 700px) {
-        .gallery {
-            --cell: calc((max(100vw, 50vh) - 2px) / 2);
-            grid-template-columns: repeat(2, 1fr);
-            width: max(100vw, 50vh);
-        }
-        .hide-mobile { display: none; }
     }
 </style>
