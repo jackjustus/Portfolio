@@ -1,0 +1,63 @@
+---
+import {cdn, srcset} from "../../scripts/cdn.ts";
+const DIR = 'lx/2026_connection_pointe_easter';
+const tiles = [
+    { file: 'CPEasterHorzWht1.jpg',     alt: 'Wide stage in a white wash' },
+    { file: 'CPEasterVertCold1.jpg',    alt: 'Cold blue wash across the upstage rig' },
+    { file: 'CPEasterHorzRed1.jpg',     alt: 'Wide stage in deep red' },
+    { file: 'CPEasterVertWarm1.jpg',    alt: 'Warm amber front light' },
+    { file: 'CPEasterVertBlue1.jpg',    alt: 'Saturated blue vertical beams' },
+    { file: 'CPEasterVertWht1.png',     alt: 'White key light on the stage' },
+    { file: 'CPEasterHorzCold1.jpg',    alt: 'Wide stage in a cold wash' },
+    { file: 'CPEasterVertRed1.jpg',     alt: 'Red uplight on the set' },
+    { file: 'CPEasterHorzWht2.jpg',     alt: 'Wide white-lit stage, second look' },
+    { file: 'CPEasterVertPurple1.jpg',  alt: 'Purple wash with haze' },
+    { file: 'CPEasterVertCold2.jpg',    alt: 'Cold wash, second look' },
+    { file: 'CPEasterHorzWarm1.jpg',    alt: 'Wide stage in warm amber' },
+    { file: 'CPEasterVertWht2.jpg',     alt: 'White wash, second look' },
+    { file: 'CPEasterHorzRed2.jpg',     alt: 'Wide red stage, second look' },
+    { file: 'CPEasterVertOrang1.png',   alt: 'Orange wash across the rig' },
+    { file: 'CPEasterHorzWht3.jpg',     alt: 'Wide white-lit stage, third look' },
+    { file: 'CPEasterVertRed2.jpg',     alt: 'Red beams, second look' },
+    { file: 'CPEasterVertCold3.jpg',    alt: 'Cold wash, third look' },
+    { file: 'CPEasterHorzMessage1.jpg', alt: 'Wide stage during the message' },
+    { file: 'CPEasterVertWarm2.jpg',    alt: 'Warm wash, second look' },
+].map(t => ({ ...t, path: `${DIR}/${t.file}` }));
+const MOBILE_COUNT = 4;
+---
+
+<div class="gallery">
+    {tiles.map(({ path, alt }, i) => (
+        <img
+            src={cdn(path, 400)}
+            srcset={srcset(path, [400, 800])}
+            sizes="(max-width: 700px) 50vw, 20vw"
+            alt={alt}
+            loading={i < MOBILE_COUNT ? 'eager' : 'lazy'}
+            fetchpriority="low"
+            decoding="async"
+            class={i < MOBILE_COUNT ? 'tile' : 'tile desktop-only'}
+        />
+    ))}
+</div>
+
+<style>
+    .gallery {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+        height: 100vh;   /* becomes 100% once it's inside the pin stage */
+    }
+    .tile {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        background-color: #1a1a1a;  /* stands in for the blur-up */
+    }
+
+    @media (max-width: 700px) {
+        .gallery { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); }
+        .desktop-only { display: none; }
+    }
+</style>
