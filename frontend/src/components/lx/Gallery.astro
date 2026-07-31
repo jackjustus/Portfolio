@@ -1,63 +1,187 @@
 ---
 import {cdn, srcset} from "../../scripts/cdn.ts";
+
 const DIR = 'lx/2026_connection_pointe_easter';
+
+/* Sources are 2:3 (Vert*) and 3:2 (Horz*). A 3:2 landscape in a square cell
+   is cropped to a third of its width, so horizontals span 2 columns: a 2:1
+   box holds them at ~25% crop and reads as a wide shot rather than a
+   mangled one.
+
+   One horizontal (2 slots) + five verticals (5 slots) = 7 slots = one desktop
+   row, so the 7-wide grid tiles exactly with no holes. The horizontal sits at
+   a different column in each row so they scatter rather than form a stripe —
+   never later than column 6, or it would wrap and leave a gap. */
 const tiles = [
+    /* row 1 — wide at col 1 */
     { file: 'CPEasterHorzWht1.jpg',     alt: 'Wide stage in a white wash' },
     { file: 'CPEasterVertCold1.jpg',    alt: 'Cold blue wash across the upstage rig' },
-    { file: 'CPEasterHorzRed1.jpg',     alt: 'Wide stage in deep red' },
+    { file: 'CPEasterVertRed1.jpg',     alt: 'Red uplight on the set' },
     { file: 'CPEasterVertWarm1.jpg',    alt: 'Warm amber front light' },
     { file: 'CPEasterVertBlue1.jpg',    alt: 'Saturated blue vertical beams' },
     { file: 'CPEasterVertWht1.png',     alt: 'White key light on the stage' },
-    { file: 'CPEasterHorzCold1.jpg',    alt: 'Wide stage in a cold wash' },
-    { file: 'CPEasterVertRed1.jpg',     alt: 'Red uplight on the set' },
-    { file: 'CPEasterHorzWht2.jpg',     alt: 'Wide white-lit stage, second look' },
-    { file: 'CPEasterVertPurple1.jpg',  alt: 'Purple wash with haze' },
+
+    /* row 2 — wide at col 3 */
     { file: 'CPEasterVertCold2.jpg',    alt: 'Cold wash, second look' },
-    { file: 'CPEasterHorzWarm1.jpg',    alt: 'Wide stage in warm amber' },
+    { file: 'CPEasterVertPurple1.jpg',  alt: 'Purple wash with haze' },
+    { file: 'CPEasterHorzRed1.jpg',     alt: 'Wide stage in deep red' },
     { file: 'CPEasterVertWht2.jpg',     alt: 'White wash, second look' },
-    { file: 'CPEasterHorzRed2.jpg',     alt: 'Wide red stage, second look' },
-    { file: 'CPEasterVertOrang1.png',   alt: 'Orange wash across the rig' },
-    { file: 'CPEasterHorzWht3.jpg',     alt: 'Wide white-lit stage, third look' },
-    { file: 'CPEasterVertRed2.jpg',     alt: 'Red beams, second look' },
-    { file: 'CPEasterVertCold3.jpg',    alt: 'Cold wash, third look' },
-    { file: 'CPEasterHorzMessage1.jpg', alt: 'Wide stage during the message' },
     { file: 'CPEasterVertWarm2.jpg',    alt: 'Warm wash, second look' },
-].map(t => ({ ...t, path: `${DIR}/${t.file}` }));
-const MOBILE_COUNT = 4;
+    { file: 'CPEasterVertOrang1.png',   alt: 'Orange wash across the rig' },
+
+    /* row 3 — wide at col 5 */
+    { file: 'CPEasterVertRed2.jpg',     alt: 'Red beams, second look' },
+    { file: 'CPEasterVertWht5.png',     alt: 'White wash, third look' },
+    { file: 'CPEasterVertCold3.jpg',    alt: 'Cold wash, third look' },
+    { file: 'CPEasterVertWarm3.jpg',    alt: 'Warm wash, third look' },
+    { file: 'CPEasterHorzCold1.jpg',    alt: 'Wide stage in a cold wash' },
+    { file: 'CPEasterVertRed3.jpg',     alt: 'Red beams, third look' },
+
+    /* row 4 — wide at col 2 */
+    { file: 'CPEasterVertCold4.jpg',    alt: 'Cold wash, fourth look' },
+    { file: 'CPEasterHorzMessage1.jpg', alt: 'Wide stage during the message' },
+    { file: 'CPEasterVertWht6.jpg',     alt: 'White wash, fourth look' },
+    { file: 'CPEasterVertCold5.jpg',    alt: 'Cold wash, fifth look' },
+    { file: 'CPEasterVertWht7.jpg',     alt: 'White wash, fifth look' },
+    { file: 'CPEasterVertCold6.jpg',    alt: 'Cold wash, sixth look' },
+
+    /* spares — not rendered */
+    { file: 'CPEasterHorzWarm1.jpg',    alt: 'Wide stage in warm amber' },
+    { file: 'CPEasterHorzRed2.jpg',     alt: 'Wide red stage, second look' },
+    { file: 'CPEasterHorzWht2.jpg',     alt: 'Wide white-lit stage, second look' },
+    { file: 'CPEasterHorzWht3.jpg',     alt: 'Wide white-lit stage, third look' },
+    { file: 'CPEasterHorzWht4.jpg',     alt: 'Wide white-lit stage, fourth look' },
+    { file: 'CPEasterHorzWht5.jpg',     alt: 'Wide white-lit stage, fifth look' },
+    { file: 'CPEasterHorzWht6.jpg',     alt: 'Wide white-lit stage, sixth look' },
+    { file: 'CPEasterVertWht8.jpg',     alt: 'White wash, sixth look' },
+    { file: 'CPEasterVertWht9.jpg',     alt: 'White wash, seventh look' },
+];
+
+const RENDERED = 24;   /* 4 horizontals + 20 verticals = 28 slots at 7 cols x 4 rows */
+const TABLET_SLOTS = 20;   /* 4 cols x 5 rows */
+const MOBILE_VERTICALS = 8;   /* 2 cols x 4 rows — horizontals are hidden here,
+                                 a 2-slot span can't tile 2 columns evenly */
+
+let slots = 0;
+let verticals = 0;
+
+const rendered = tiles.slice(0, RENDERED).map((t) => {
+    const wide = t.file.includes('Horz');
+    slots += wide ? 2 : 1;
+    return {
+        ...t,
+        wide,
+        path: `${DIR}/${t.file}`,
+        onMobile: !wide && verticals++ < MOBILE_VERTICALS,
+        onTablet: slots <= TABLET_SLOTS,
+    };
+});
+
+const classes = (t: typeof rendered[number]) => [
+    'tile',
+    t.wide ? 'wide' : '',
+    t.onMobile ? '' : 'hide-mobile',
+    t.onTablet ? '' : 'hide-tablet',
+].filter(Boolean).join(' ');
 ---
 
-<div class="gallery">
-    {tiles.map(({ path, alt }, i) => (
-        <img
-            src={cdn(path, 400)}
-            srcset={srcset(path, [400, 800])}
-            sizes="(max-width: 700px) 50vw, 20vw"
-            alt={alt}
-            loading={i < MOBILE_COUNT ? 'eager' : 'lazy'}
-            fetchpriority="low"
-            decoding="async"
-            class={i < MOBILE_COUNT ? 'tile' : 'tile desktop-only'}
-        />
-    ))}
-</div>
+<section class="stage">
+    <div class="gallery">
+        {rendered.map((t) => (
+            <img
+                src={cdn(t.path, t.wide ? 600 : 400)}
+                srcset={srcset(t.path, t.wide ? [600, 1200] : [400, 800])}
+                sizes={t.wide
+                    ? '(max-width: 1100px) 50vw, 28vw'
+                    : '(max-width: 700px) 50vw, (max-width: 1100px) 25vw, 14vw'}
+                alt={t.alt}
+                loading={t.onMobile ? 'eager' : 'lazy'}
+                fetchpriority="low"
+                decoding="async"
+                class={classes(t)}
+            />
+        ))}
+    </div>
+    <div class="title-card"><slot /></div>
+</section>
 
 <style>
-    .gallery {
+    /* One viewport tall, grid centred and clipped. Square cells, so the
+       7x4 grid covers the viewport exactly at any aspect ratio. */
+    .stage {
+        height: 100vh;
+        overflow: hidden;
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        grid-template-rows: repeat(5, 1fr);
-        height: 100vh;   /* becomes 100% once it's inside the pin stage */
-    }
-    .tile {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        background-color: #1a1a1a;  /* stands in for the blur-up */
+        grid-template-areas: "stack";
+        place-content: center;
+        background-color: #0F0F0F;
     }
 
+    .gallery,
+    .title-card {
+        grid-area: stack;
+    }
+
+    /* Width covers the viewport in both axes: at square the grid is cols/rows
+       wide per unit tall, so 7/4 -> 175vh. --cell is that width divided by the
+       column count (minus gaps), i.e. the height a square tile needs. */
+    .gallery {
+        --cell: calc((max(100vw, 175vh) - 12px) / 7);
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        grid-auto-flow: row dense;   /* backfills if a 2-slot tile can't end a row */
+        width: max(100vw, 175vh);
+        gap: 2px;
+        filter: brightness(0.75);
+    }
+
+    .tile {
+        display: block;
+        width: 100%;
+        height: var(--cell);
+        object-fit: cover;
+        background-color: #1a1a1a;
+    }
+
+    .wide {
+        grid-column: span 2;
+    }
+
+    /* radial scrim keeps the text legible over the lit photographs */
+    .title-card {
+        place-self: center;
+        z-index: 1;
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #f3ede5;
+        background: radial-gradient(ellipse at center, rgb(15 15 15 / 0.85) 0%, rgb(15 15 15 / 0) 70%);
+    }
+
+    /* slotted content carries the parent page's scope, so reach it globally
+       and outrank the .lx p / .lx h2 rules from LxLayout */
+    .title-card :global(h2),
+    .title-card :global(p) {
+        color: #f3ede5;
+        margin-inline: 0;
+    }
+
+    /* 4 cols x 5 rows -> 4/5 -> 80vh */
+    @media (max-width: 1100px) {
+        .gallery {
+            --cell: calc((max(100vw, 80vh) - 6px) / 4);
+            grid-template-columns: repeat(4, 1fr);
+            width: max(100vw, 80vh);
+        }
+        .hide-tablet { display: none; }
+    }
+
+    /* 2 cols x 4 rows -> 2/4 -> 50vh */
     @media (max-width: 700px) {
-        .gallery { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); }
-        .desktop-only { display: none; }
+        .gallery {
+            --cell: calc((max(100vw, 50vh) - 2px) / 2);
+            grid-template-columns: repeat(2, 1fr);
+            width: max(100vw, 50vh);
+        }
+        .hide-mobile { display: none; }
     }
 </style>
