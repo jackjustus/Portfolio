@@ -22,7 +22,10 @@
   },
   "env": {
     "preview": {
-      "name": "portfolio-staging"
+      "name": "portfolio-staging",
+      "analytics_engine_datasets": [
+        { "binding": "ANALYTICS_ENGINE", "dataset": "analytics_staging" }
+      ]
     }
   },
   "analytics_engine_datasets": [
