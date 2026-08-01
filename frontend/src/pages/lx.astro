@@ -8,27 +8,31 @@ import Gallery from "../components/lx/Gallery.astro";
 
 <LxLayout title="jack justus design">
 	<HeroImg />
-	<Gallery />
-	<div class="title-track">
-		<div class="title-lead"></div>
-		<div class="page-title" id="page-title">
-			<h2>The Sun</h2>
+	<Gallery>
+		<div class="credits" id="credits">
+			<div class="left-creds">
+				<p>set & lx</p>
+				<p>venue</p>
+				<p>photos</p>
+			</div>
+			<div class="right-creds">
+				<p>jake collins & jack justus</p>
+				<p>connection pointe</p>
+				<p>aaron williams & connection pointe</p>
+			</div>
 		</div>
-		<div class="title-tail"></div>
-	</div>
-	<div class="credits" id="credits">
-		<div class="credits-card">
-			<h3>Credits</h3>
-			<p>Lighting Design — Jack Justus</p>
-			<p>Connection Pointe Christian Church — Easter 2026</p>
-		</div>
+	</Gallery>
+	<div class="outro"></div>
+	<div class="page-title" id="page-title">
+		<h2>The Sun</h2>
 	</div>
 </LxLayout>
 
 <script>
 	const REVEAL_AT = 0.5;
-	const WIPE_AT = 2;
-	const CREDITS_AT = 2.5;
+	const DRIFT_AT = 1;
+	const CREDITS_AT = 2.6;
+	const EXIT_AT = 3.5;
 
 	let onScroll: (() => void) | null = null;
 
@@ -44,7 +48,8 @@ import Gallery from "../components/lx/Gallery.astro";
 		onScroll = () => {
 			const vh = window.innerHeight;
 			title.classList.toggle('shown', window.scrollY > vh * REVEAL_AT);
-			title.classList.toggle('wiped', window.scrollY > vh * WIPE_AT);
+			title.classList.toggle('drifted', window.scrollY > vh * DRIFT_AT);
+			title.classList.toggle('exited', window.scrollY > vh * EXIT_AT);
 			credits.classList.toggle('shown', window.scrollY > vh * CREDITS_AT);
 		};
 
@@ -57,68 +62,93 @@ import Gallery from "../components/lx/Gallery.astro";
 </script>
 
 <style>
-	.title-track {
-		position: absolute;
-		top: 0;
+	.page-title {
+		--title-start: 78vh;
+		--title-end: 35vh;
+		--title-fade-ease: ease-out;
+		--title-drift-ease: ease-in-out;
+		--title-travel: calc(var(--title-end) - var(--title-start));
+		--title-exit: calc(-1 * var(--outro-track));
+
+		position: fixed;
+		top: var(--title-start);
 		left: 0;
-		width: 100%;
-		height: calc(var(--hero-track) + var(--stage-track));
+		right: 0;
 		display: flex;
-		flex-direction: column;
+		justify-content: center;
 		z-index: 2;
 		pointer-events: none;
 	}
 
-	.title-lead {
-		flex: 1;
-	}
-
-	.title-tail {
-		flex: 0 0 var(--stage-track);
-	}
-
-	.page-title {
-		position: sticky;
-		top: 0;
-		bottom: 0;
-		margin: 2rem;
-		display: flex;
-		justify-content: center;
+	.outro {
+		height: var(--outro-track);
 	}
 
 	.credits {
-		position: fixed;
-		inset: 0;
-		display: grid;
-		place-items: center;
-		z-index: 3;
-		pointer-events: none;
-		opacity: 0;
-	}
+		--credits-top: 45vh;
+		--credits-pad: 3rem;
 
-	.credits-card {
+		position: absolute;
+		top: calc(var(--credits-top) - var(--credits-pad));
+		left: 0;
+		right: 0;
+		width: min(40rem, 80vw);
+		margin-inline: auto;
+		padding: var(--credits-pad) 2rem;
 		text-align: center;
-		color: #f3ede5;
-		padding: 2rem;
+		background: radial-gradient(ellipse at center, rgb(15 15 15 / 0.55), rgb(15 15 15 / 0) 70%);
+		opacity: 0;
+		pointer-events: none;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		column-gap: 2.5rem;
+		align-items: start;
 	}
 
-	@keyframes title-in {
+	.left-creds {
+		text-align: right;
+	}
+
+	.right-creds {
+		text-align: left;
+	}
+
+	.credits p {
+		color: #f3ede5;
+		margin-inline: 0;
+	}
+
+	@keyframes title-arc {
+		0% {
+			opacity: 0;
+			translate: 0 0;
+		}
+		50% {
+			opacity: 1;
+			translate: 0 0;
+			animation-timing-function: var(--title-drift-ease);
+		}
+		100% {
+			opacity: 1;
+			translate: 0 var(--title-travel);
+		}
+	}
+
+	@keyframes title-leave {
+		from {
+			transform: translateY(0);
+		}
+		to {
+			transform: translateY(var(--title-exit));
+		}
+	}
+
+	@keyframes scrim-in {
 		from {
 			opacity: 0;
-			transform: translateY(2rem);
 		}
 		to {
 			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
-	@keyframes title-wipe {
-		from {
-			clip-path: inset(0 0 0 0);
-		}
-		to {
-			clip-path: inset(100% 0 0 0);
 		}
 	}
 
@@ -135,30 +165,40 @@ import Gallery from "../components/lx/Gallery.astro";
 
 	@supports (animation-timeline: scroll()) {
 		.page-title {
-			animation: title-in ease-out both, title-wipe linear both;
+			animation: title-arc var(--title-fade-ease) both, title-leave linear both;
 			animation-timeline: scroll(root block), scroll(root block);
-			animation-range: 0 100vh, 200vh 250vh;
+			animation-range: 0 var(--hero-track), var(--stage-unpin) calc(var(--stage-unpin) + var(--outro-track));
 		}
 
 		.credits {
 			animation: credits-in ease-out both;
 			animation-timeline: scroll(root block);
-			animation-range: 250vh 330vh;
+			animation-range: var(--credits-in) calc(var(--credits-in) + var(--credits-len));
+		}
+
+		h2::before {
+			animation: scrim-in ease-out both;
+			animation-timeline: scroll(root block);
+			animation-range: var(--credits-in) calc(var(--credits-in) + var(--credits-len));
 		}
 	}
 
 	@supports not (animation-timeline: scroll()) {
+		h2::before {
+			opacity: 1;
+		}
 		.page-title {
 			opacity: 0;
-			transform: translateY(2rem);
-			transition: opacity 0.6s ease-out, transform 0.6s ease-out, clip-path 0.4s ease-out;
+			transition: opacity 0.6s var(--title-fade-ease), translate 0.8s var(--title-drift-ease), transform 0.6s linear;
 		}
 		.page-title.shown {
 			opacity: 1;
-			transform: translateY(0);
 		}
-		.page-title.wiped {
-			clip-path: inset(100% 0 0 0);
+		.page-title.drifted {
+			translate: 0 var(--title-travel);
+		}
+		.page-title.exited {
+			transform: translateY(var(--title-exit));
 		}
 		.credits {
 			transition: opacity 0.6s ease-out, transform 0.6s ease-out;
@@ -181,10 +221,20 @@ import Gallery from "../components/lx/Gallery.astro";
 
 	}
 	h2 {
+		position: relative;
 		color: #d5d5d5;
 		font-size: xxx-large;
 		text-shadow: 0 0 0.5rem antiquewhite;
 		margin: 1rem;
+	}
+
+	h2::before {
+		content: '';
+		position: absolute;
+		inset: -2rem -4rem;
+		z-index: -1;
+		background: radial-gradient(ellipse at center, rgb(15 15 15 / 0.85), rgb(15 15 15 / 0) 70%);
+		opacity: 0;
 	}
 	.lx :global(p)  {
 		margin-top: 0;

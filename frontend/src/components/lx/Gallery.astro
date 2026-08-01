@@ -81,7 +81,7 @@ if (slots % 3) console.warn(`[Gallery] ${slots} slots is not a multiple of 3 —
             ))}
         </div>
     </div>
-    <!--<div class="title-card"><slot /></div>-->
+    {Astro.slots.has('default') && <div class="title-card"><slot /></div>}
 </section>
 </div>
 
@@ -146,14 +146,9 @@ if (slots % 3) console.warn(`[Gallery] ${slots} slots is not a multiple of 3 —
         grid-column: span 2;
     }
 
-    /* radial scrim keeps the text legible over the lit photographs */
     .title-card {
-        place-self: center;
         z-index: 1;
-        text-align: center;
-        padding: 4rem 2rem;
-        color: #f3ede5;
-        background: radial-gradient(ellipse at center, rgb(15 15 15 / 0.85) 0%, rgb(15 15 15 / 0) 70%);
+        pointer-events: none;
     }
 
     /* slotted content carries the parent page's scope, so reach it globally
