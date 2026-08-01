@@ -4,22 +4,29 @@ const imgPath = "lx/2026_connection_pointe_easter/HERO.jpeg"
 const blur = await lqip(imgPath)
 ---
 
-<div class="container">
-  <img
-      src={cdn(imgPath, 1920)}
-      srcset={srcset(imgPath, [960, 1280, 1920, 2560])}
-      alt="Connection Pointe Easter 2026"
-      loading="eager"
-      fetchpriority="high"
-      decoding="async"
-      class="image"
-  />
-  <div class="hero-blur" style={blur ? `background-image:url(${blur})` : undefined}/>
+<!-- 200vh of scroll canvas; the pane inside pins for all of it -->
+<div class="hero">
+  <div class="container">
+    <img
+        src={cdn(imgPath, 1920)}
+        srcset={srcset(imgPath, [960, 1280, 1920, 2560])}
+        alt="Connection Pointe Easter 2026"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+        class="image"
+    />
+    <div class="hero-blur" style={blur ? `background-image:url(${blur})` : undefined}/>
+  </div>
 </div>
 
 <style>
+    .hero {
+        height: 200vh;
+    }
     .container {
-        position: relative;
+        position: sticky;
+        top: 0;
         height: 100vh;
         overflow: hidden;
     }

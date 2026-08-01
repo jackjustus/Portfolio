@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Greeter from '../components/index/Greeter.js';
+// import Greeter from '../components/index/Greeter.js';
 import LxLayout from "../layouts/LxLayout.astro";
 import HeroImg from "../components/lx/HeroImg.astro";
 import Gallery from "../components/lx/Gallery.astro";
@@ -8,13 +8,90 @@ import Gallery from "../components/lx/Gallery.astro";
 
 <LxLayout title="Jack's Blog">
 	<HeroImg />
-	<Gallery>
-		<h2>Connection Pointe</h2>
-		<p>Easter 2026</p>
-	</Gallery>
+	<Gallery />
+	<!-- Fixed, so it survives the hand-off from the pinned hero to the gallery.
+	     Revealed once, then left up for the rest of the page. -->
+	<div class="page-title" id="page-title">
+		<h2>The Sun</h2>
+	</div>
 </LxLayout>
 
+<script>
+	// Fraction of the hero's scroll travel (one viewport) before the title comes
+	// in. Matches the start of animation-range in the stylesheet.
+	const REVEAL_AT = 0.5;
+
+	function initTitle() {
+		// Browsers with scroll timelines run the keyframes off the scroller itself.
+		if (CSS.supports('animation-timeline', 'scroll()')) return;
+
+		const title = document.getElementById('page-title');
+		if (!title) return;
+
+		const onScroll = () => {
+			if (window.scrollY > window.innerHeight * REVEAL_AT) {
+				title.classList.add('shown');
+				window.removeEventListener('scroll', onScroll);
+			}
+		};
+
+		window.addEventListener('scroll', onScroll, { passive: true });
+		onScroll();
+	}
+
+	initTitle();
+	document.addEventListener('astro:page-load', initTitle);
+</script>
+
 <style>
+	.page-title {
+		position: fixed;
+		margin: 2rem;
+		bottom: 0;
+		left: 0;
+		z-index: 0;
+	}
+
+	@keyframes title-in {
+		from {
+			opacity: 0;
+			transform: translateY(2rem);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	/* Driven by document scroll rather than time. `both` fill is what makes it
+	   stick: hidden before the range, held in place after it — so the finished
+	   state carries through the gallery.
+
+	   The range is in scroll offsets, not page offsets. The hero is a 200vh block
+	   holding a 100vh sticky pane, so it only spends 100vh of scroll: the pane
+	   unpins at scrollTop 100vh, which is where the gallery takes the screen.
+	   50vh–100vh therefore lands the title exactly as the hero hands off. */
+	@supports (animation-timeline: scroll()) {
+		.page-title {
+			animation: title-in ease-out both;
+			animation-timeline: scroll(root block);
+			animation-range: 0 100vh;
+		}
+	}
+
+	/* Firefox has no scroll timelines yet; the script below flips this instead. */
+	@supports not (animation-timeline: scroll()) {
+		.page-title {
+			opacity: 0;
+			transform: translateY(2rem);
+			transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+		}
+		.page-title.shown {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
 	.lx :global(p) {
 		color: #714b4b;
 	}
@@ -24,6 +101,17 @@ import Gallery from "../components/lx/Gallery.astro";
 		font-weight: bolder;
 		margin: 8px;
 
+	}
+	.page-title {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+	}
+	h2 {
+		color: #d5d5d5;
+		font-size: xxx-large;
+		text-shadow: 0 0 0.5rem antiquewhite;
+		margin: 1rem;
 	}
 	.lx :global(p)  {
 		margin-top: 0;

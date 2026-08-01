@@ -89,6 +89,8 @@ if (slots % 3) console.warn(`[Gallery] ${slots} slots is not a multiple of 3 —
        of `.reel`, not a child, since sticky inside a scroll container resolves
        against that container instead of the viewport. */
     .stage {
+        position: relative;
+        z-index: 1;
         height: 100vh;
         display: grid;
         grid-template-areas: "stack";
