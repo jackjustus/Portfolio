@@ -63,6 +63,7 @@ const slots = rendered.reduce((n, t) => n + (t.wide ? 2 : 1), 0);
 if (slots % 3) console.warn(`[Gallery] ${slots} slots is not a multiple of 3 — last column will be short`);
 ---
 
+<div class="stage-track">
 <section class="stage">
     <div class="reel">
         <div class="gallery">
@@ -82,14 +83,20 @@ if (slots % 3) console.warn(`[Gallery] ${slots} slots is not a multiple of 3 —
     </div>
     <!--<div class="title-card"><slot /></div>-->
 </section>
+</div>
 
 <style>
     /* The surface that will pin. `.reel` and `.title-card` stack in one grid
        area so the card can overlay the strip — and the card must stay a sibling
        of `.reel`, not a child, since sticky inside a scroll container resolves
        against that container instead of the viewport. */
+    .stage-track {
+        height: var(--stage-track, 250vh);
+    }
+
     .stage {
-        position: relative;
+        position: sticky;
+        top: 0;
         z-index: 1;
         height: 100vh;
         display: grid;

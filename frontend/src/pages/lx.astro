@@ -9,30 +9,43 @@ import Gallery from "../components/lx/Gallery.astro";
 <LxLayout title="jack justus design">
 	<HeroImg />
 	<Gallery />
-	<!-- Fixed, so it survives the hand-off from the pinned hero to the gallery.
-	     Revealed once, then left up for the rest of the page. -->
-	<div class="page-title" id="page-title">
-		<h2>The Sun</h2>
+	<div class="title-track">
+		<div class="title-lead"></div>
+		<div class="page-title" id="page-title">
+			<h2>The Sun</h2>
+		</div>
+		<div class="title-tail"></div>
+	</div>
+	<div class="credits" id="credits">
+		<div class="credits-card">
+			<h3>Credits</h3>
+			<p>Lighting Design — Jack Justus</p>
+			<p>Connection Pointe Christian Church — Easter 2026</p>
+		</div>
 	</div>
 </LxLayout>
 
 <script>
-	// Fraction of the hero's scroll travel (one viewport) before the title comes
-	// in. Matches the start of animation-range in the stylesheet.
 	const REVEAL_AT = 0.5;
+	const WIPE_AT = 2;
+	const CREDITS_AT = 2.5;
+
+	let onScroll: (() => void) | null = null;
 
 	function initTitle() {
-		// Browsers with scroll timelines run the keyframes off the scroller itself.
 		if (CSS.supports('animation-timeline', 'scroll()')) return;
 
-		const title = document.getElementById('page-title');
-		if (!title) return;
+		if (onScroll) window.removeEventListener('scroll', onScroll);
 
-		const onScroll = () => {
-			if (window.scrollY > window.innerHeight * REVEAL_AT) {
-				title.classList.add('shown');
-				window.removeEventListener('scroll', onScroll);
-			}
+		const title = document.getElementById('page-title');
+		const credits = document.getElementById('credits');
+		if (!title || !credits) return;
+
+		onScroll = () => {
+			const vh = window.innerHeight;
+			title.classList.toggle('shown', window.scrollY > vh * REVEAL_AT);
+			title.classList.toggle('wiped', window.scrollY > vh * WIPE_AT);
+			credits.classList.toggle('shown', window.scrollY > vh * CREDITS_AT);
 		};
 
 		window.addEventListener('scroll', onScroll, { passive: true });
@@ -44,12 +57,49 @@ import Gallery from "../components/lx/Gallery.astro";
 </script>
 
 <style>
-	.page-title {
-		position: fixed;
-		margin: 2rem;
-		bottom: 0;
+	.title-track {
+		position: absolute;
+		top: 0;
 		left: 0;
-		z-index: 0;
+		width: 100%;
+		height: calc(var(--hero-track) + var(--stage-track));
+		display: flex;
+		flex-direction: column;
+		z-index: 2;
+		pointer-events: none;
+	}
+
+	.title-lead {
+		flex: 1;
+	}
+
+	.title-tail {
+		flex: 0 0 var(--stage-track);
+	}
+
+	.page-title {
+		position: sticky;
+		top: 0;
+		bottom: 0;
+		margin: 2rem;
+		display: flex;
+		justify-content: center;
+	}
+
+	.credits {
+		position: fixed;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		z-index: 3;
+		pointer-events: none;
+		opacity: 0;
+	}
+
+	.credits-card {
+		text-align: center;
+		color: #f3ede5;
+		padding: 2rem;
 	}
 
 	@keyframes title-in {
@@ -63,30 +113,58 @@ import Gallery from "../components/lx/Gallery.astro";
 		}
 	}
 
-	/* Driven by document scroll rather than time. `both` fill is what makes it
-	   stick: hidden before the range, held in place after it — so the finished
-	   state carries through the gallery.
-
-	   The range is in scroll offsets, not page offsets. The hero is a 200vh block
-	   holding a 100vh sticky pane, so it only spends 100vh of scroll: the pane
-	   unpins at scrollTop 100vh, which is where the gallery takes the screen.
-	   50vh–100vh therefore lands the title exactly as the hero hands off. */
-	@supports (animation-timeline: scroll()) {
-		.page-title {
-			animation: title-in ease-out both;
-			animation-timeline: scroll(root block);
-			animation-range: 0 100vh;
+	@keyframes title-wipe {
+		from {
+			clip-path: inset(0 0 0 0);
+		}
+		to {
+			clip-path: inset(100% 0 0 0);
 		}
 	}
 
-	/* Firefox has no scroll timelines yet; the script below flips this instead. */
+	@keyframes credits-in {
+		from {
+			opacity: 0;
+			transform: translateY(1.5rem);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@supports (animation-timeline: scroll()) {
+		.page-title {
+			animation: title-in ease-out both, title-wipe linear both;
+			animation-timeline: scroll(root block), scroll(root block);
+			animation-range: 0 100vh, 200vh 250vh;
+		}
+
+		.credits {
+			animation: credits-in ease-out both;
+			animation-timeline: scroll(root block);
+			animation-range: 250vh 330vh;
+		}
+	}
+
 	@supports not (animation-timeline: scroll()) {
 		.page-title {
 			opacity: 0;
 			transform: translateY(2rem);
-			transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+			transition: opacity 0.6s ease-out, transform 0.6s ease-out, clip-path 0.4s ease-out;
 		}
 		.page-title.shown {
+			opacity: 1;
+			transform: translateY(0);
+		}
+		.page-title.wiped {
+			clip-path: inset(100% 0 0 0);
+		}
+		.credits {
+			transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+			transform: translateY(1.5rem);
+		}
+		.credits.shown {
 			opacity: 1;
 			transform: translateY(0);
 		}
@@ -101,11 +179,6 @@ import Gallery from "../components/lx/Gallery.astro";
 		font-weight: bolder;
 		margin: 8px;
 
-	}
-	.page-title {
-		width: 100%;
-		display: flex;
-		justify-content: center;
 	}
 	h2 {
 		color: #d5d5d5;
