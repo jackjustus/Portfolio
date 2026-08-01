@@ -224,7 +224,7 @@ import Gallery from "../components/lx/Gallery.astro";
 		position: relative;
 		color: #d5d5d5;
 		font-size: xxx-large;
-		--h2-glow: 0 0 0.5rem antiquewhite;
+		--h2-glow: 0 0 12px antiquewhite;
 		text-shadow: var(--h2-glow);
 		/*text-shadow: 0 0 0.3rem #FAEBD750;*/
 		margin: 1rem;
@@ -232,7 +232,7 @@ import Gallery from "../components/lx/Gallery.astro";
 	/*safari special text shadow*/
 	@supports (background: -webkit-named-image(i)) {
 		h2 {
-			--h2-glow: 0 0 0.5rem #FAEBD750;
+			--h2-glow: 0 0 8px #FAEBD750;
 		}
 	}
 
