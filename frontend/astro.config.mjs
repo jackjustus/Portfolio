@@ -8,6 +8,11 @@ import mdx from "@astrojs/mdx";
 // https://astro.build/config
 export default defineConfig({
   integrations: [vue(), mdx()],
+  vite: {
+    build: {
+      cssMinify: 'esbuild'
+    }
+  },
   server: {
     port: 8000,
   },
