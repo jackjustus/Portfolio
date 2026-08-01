@@ -66,13 +66,13 @@ if (slots % 3) console.warn(`[Gallery] ${slots} slots is not a multiple of 3 —
 <section class="stage">
     <div class="reel">
         <div class="gallery">
-            {rendered.map((t, i) => (
+            {rendered.map((t) => (
                 <img
                     src={cdn(t.path, t.wide ? 600 : 400)}
                     srcset={srcset(t.path, t.wide ? [600, 1200] : [400, 800])}
                     sizes={t.wide ? '45vh' : '22vh'}
                     alt={t.alt}
-                    loading={i < 9 ? 'eager' : 'lazy'}
+                    loading="lazy"
                     fetchpriority="low"
                     decoding="async"
                     class={t.wide ? 'tile wide' : 'tile'}

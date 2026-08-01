@@ -54,7 +54,11 @@ const blur = await lqip(imgPath)
         .finally(() => container.classList.add('loaded'));
   }
 
-  document.addEventListener('astro:page-load', initHero);
+  /* Not astro:page-load alone: on the initial load ClientRouter dispatches that
+     from window.load, which waits on every image on the page. The module script
+     is deferred, so the DOM is ready to run against right now. */
+  initHero();
+  document.addEventListener('astro:page-load', initHero);   // subsequent ClientRouter swaps
 </script>
 
 <!--disable blur if ts can't load-->
