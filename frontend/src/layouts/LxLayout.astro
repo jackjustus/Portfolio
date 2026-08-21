@@ -39,6 +39,12 @@ const { title } = Astro.props;
   }
   /*noinspection CssUnresolvedCustomProperty*/
   .lx {
+      --hero-track: 200vh;
+      --stage-track: 250vh;
+      --outro-track: 100vh;
+      --stage-unpin: calc(var(--hero-track) + var(--stage-track) - 100vh);
+      --credits-in: 260vh;
+      --credits-len: 40vh;
       min-height: 100vh;
       font-family: var(--libre-baskerville), serif;
       cursor: default;

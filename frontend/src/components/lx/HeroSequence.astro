@@ -1,0 +1,243 @@
+---
+import HeroImg from "./HeroImg.astro";
+import Gallery from "./Gallery.astro";
+---
+
+<div class="hero-sequence">
+	<HeroImg />
+	<Gallery>
+		<div class="credits" id="credits">
+			<div class="left-creds">
+				<p>set & lx</p>
+				<p>venue</p>
+				<p>photos</p>
+			</div>
+			<div class="right-creds">
+				<p>jake collins & jack justus</p>
+				<p>connection pointe</p>
+				<p>aaron williams & connection pointe</p>
+			</div>
+		</div>
+	</Gallery>
+	<div class="page-title" id="page-title">
+		<h2>The Sun</h2>
+	</div>
+</div>
+
+<script>
+	const REVEAL_AT = 0.5;
+	const DRIFT_AT = 1;
+	const CREDITS_AT = 2.6;
+	const EXIT_AT = 3.5;
+
+	let onScroll: (() => void) | null = null;
+
+	function initTitle() {
+		if (CSS.supports('animation-timeline', 'scroll()')) return;
+
+		if (onScroll) window.removeEventListener('scroll', onScroll);
+
+		const title = document.getElementById('page-title');
+		const credits = document.getElementById('credits');
+		if (!title || !credits) return;
+
+		onScroll = () => {
+			const vh = window.innerHeight;
+			title.classList.toggle('shown', window.scrollY > vh * REVEAL_AT);
+			title.classList.toggle('drifted', window.scrollY > vh * DRIFT_AT);
+			title.classList.toggle('exited', window.scrollY > vh * EXIT_AT);
+			credits.classList.toggle('shown', window.scrollY > vh * CREDITS_AT);
+		};
+
+		window.addEventListener('scroll', onScroll, { passive: true });
+		onScroll();
+	}
+
+	initTitle();
+	document.addEventListener('astro:page-load', initTitle);
+</script>
+
+<style>
+	.hero-sequence {
+		--hero-track: 200vh;
+		--stage-track: 250vh;
+		--outro-track: 100vh;
+		--stage-unpin: calc(var(--hero-track) + var(--stage-track) - 100vh);
+		--credits-in: 260vh;
+		--credits-len: 40vh;
+	}
+
+	.page-title {
+		--title-start: 78vh;
+		--title-end: 35vh;
+		--title-fade-ease: ease-out;
+		--title-drift-ease: ease-in-out;
+		--title-travel: calc(var(--title-end) - var(--title-start));
+		--title-exit: calc(-1 * var(--outro-track));
+
+		position: fixed;
+		top: var(--title-start);
+		left: 0;
+		right: 0;
+		display: flex;
+		justify-content: center;
+		z-index: 2;
+		pointer-events: none;
+	}
+
+	.outro {
+		height: var(--outro-track);
+	}
+
+	.credits {
+		--credits-top: 45vh;
+		--credits-pad: 3rem;
+
+		position: absolute;
+		top: calc(var(--credits-top) - var(--credits-pad));
+		left: 0;
+		right: 0;
+		width: min(40rem, 80vw);
+		margin-inline: auto;
+		padding: var(--credits-pad) 2rem;
+		text-align: center;
+		background: radial-gradient(ellipse at center, rgb(15 15 15 / 0.85), rgb(15 15 15 / 0) 90%);
+		opacity: 0;
+		pointer-events: none;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		column-gap: 2.5rem;
+		align-items: start;
+	}
+
+	.left-creds {
+		text-align: right;
+	}
+
+	.right-creds {
+		text-align: left;
+	}
+
+	.credits p {
+		color: #f3ede5;
+		margin-inline: 0;
+	}
+
+	h2 {
+		position: relative;
+		color: #d5d5d5;
+		font-size: xxx-large;
+		--h2-glow: 0 0 12px antiquewhite;
+		text-shadow: var(--h2-glow);
+		/*text-shadow: 0 0 0.3rem #FAEBD750;*/
+		margin: 1rem;
+	}
+
+	/*safari special text shadow*/
+	@supports (background: -webkit-named-image(i)) {
+		h2 {
+			--h2-glow: 0 0 8px #FAEBD750;
+		}
+	}
+
+	h2::before {
+		content: '';
+		position: absolute;
+		inset: -2rem -4rem;
+		z-index: -1;
+		background: radial-gradient(ellipse at center, rgb(15 15 15 / 1), rgb(15 15 15 / 0) 85%);
+		opacity: 0;
+	}
+
+	@keyframes title-arc {
+		0% {
+			opacity: 0;
+			translate: 0 0;
+		}
+		50% {
+			opacity: 1;
+			translate: 0 0;
+			animation-timing-function: var(--title-drift-ease);
+		}
+		100% {
+			opacity: 1;
+			translate: 0 var(--title-travel);
+		}
+	}
+
+	@keyframes title-leave {
+		from {
+			transform: translateY(0);
+		}
+		to {
+			transform: translateY(var(--title-exit));
+		}
+	}
+
+	@keyframes scrim-in {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	@keyframes credits-in {
+		from {
+			opacity: 0;
+			transform: translateY(1.5rem);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@supports (animation-timeline: scroll()) {
+		.page-title {
+			animation: title-arc var(--title-fade-ease) both, title-leave linear both;
+			animation-timeline: scroll(root block), scroll(root block);
+			animation-range: 0 var(--hero-track), var(--stage-unpin) calc(var(--stage-unpin) + var(--outro-track));
+		}
+
+		.credits {
+			animation: credits-in ease-out both;
+			animation-timeline: scroll(root block);
+			animation-range: var(--credits-in) calc(var(--credits-in) + var(--credits-len));
+		}
+
+		h2::before {
+			animation: scrim-in ease-out both;
+			animation-timeline: scroll(root block);
+			animation-range: var(--credits-in) calc(var(--credits-in) + var(--credits-len));
+		}
+	}
+
+	@supports not (animation-timeline: scroll()) {
+		h2::before {
+			opacity: 1;
+		}
+		.page-title {
+			opacity: 0;
+			transition: opacity 0.6s var(--title-fade-ease), translate 0.8s var(--title-drift-ease), transform 0.6s linear;
+		}
+		.page-title.shown {
+			opacity: 1;
+		}
+		.page-title.drifted {
+			translate: 0 var(--title-travel);
+		}
+		.page-title.exited {
+			transform: translateY(var(--title-exit));
+		}
+		.credits {
+			transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+			transform: translateY(1.5rem);
+		}
+		.credits.shown {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+</style>

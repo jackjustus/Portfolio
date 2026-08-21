@@ -63,16 +63,17 @@ const slots = rendered.reduce((n, t) => n + (t.wide ? 2 : 1), 0);
 if (slots % 3) console.warn(`[Gallery] ${slots} slots is not a multiple of 3 — last column will be short`);
 ---
 
+<div class="stage-track">
 <section class="stage">
     <div class="reel">
         <div class="gallery">
-            {rendered.map((t, i) => (
+            {rendered.map((t) => (
                 <img
                     src={cdn(t.path, t.wide ? 600 : 400)}
                     srcset={srcset(t.path, t.wide ? [600, 1200] : [400, 800])}
                     sizes={t.wide ? '45vh' : '22vh'}
                     alt={t.alt}
-                    loading={i < 9 ? 'eager' : 'lazy'}
+                    loading="lazy"
                     fetchpriority="low"
                     decoding="async"
                     class={t.wide ? 'tile wide' : 'tile'}
@@ -80,15 +81,23 @@ if (slots % 3) console.warn(`[Gallery] ${slots} slots is not a multiple of 3 —
             ))}
         </div>
     </div>
-    <!--<div class="title-card"><slot /></div>-->
+    {Astro.slots.has('default') && <div class="title-card"><slot /></div>}
 </section>
+</div>
 
 <style>
     /* The surface that will pin. `.reel` and `.title-card` stack in one grid
        area so the card can overlay the strip — and the card must stay a sibling
        of `.reel`, not a child, since sticky inside a scroll container resolves
        against that container instead of the viewport. */
+    .stage-track {
+        height: var(--stage-track, 250vh);
+    }
+
     .stage {
+        position: sticky;
+        top: 0;
+        z-index: 1;
         height: 100vh;
         display: grid;
         grid-template-areas: "stack";
@@ -137,14 +146,9 @@ if (slots % 3) console.warn(`[Gallery] ${slots} slots is not a multiple of 3 —
         grid-column: span 2;
     }
 
-    /* radial scrim keeps the text legible over the lit photographs */
     .title-card {
-        place-self: center;
         z-index: 1;
-        text-align: center;
-        padding: 4rem 2rem;
-        color: #f3ede5;
-        background: radial-gradient(ellipse at center, rgb(15 15 15 / 0.85) 0%, rgb(15 15 15 / 0) 70%);
+        pointer-events: none;
     }
 
     /* slotted content carries the parent page's scope, so reach it globally
