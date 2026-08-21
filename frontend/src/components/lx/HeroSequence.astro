@@ -1,12 +1,9 @@
 ---
-import Layout from '../layouts/Layout.astro';
-// import Greeter from '../components/index/Greeter.js';
-import LxLayout from "../layouts/LxLayout.astro";
-import HeroImg from "../components/lx/HeroImg.astro";
-import Gallery from "../components/lx/Gallery.astro";
+import HeroImg from "./HeroImg.astro";
+import Gallery from "./Gallery.astro";
 ---
 
-<LxLayout title="jack justus design">
+<div class="hero-sequence">
 	<HeroImg />
 	<Gallery>
 		<div class="credits" id="credits">
@@ -22,11 +19,10 @@ import Gallery from "../components/lx/Gallery.astro";
 			</div>
 		</div>
 	</Gallery>
-	<div class="outro"></div>
 	<div class="page-title" id="page-title">
 		<h2>The Sun</h2>
 	</div>
-</LxLayout>
+</div>
 
 <script>
 	const REVEAL_AT = 0.5;
@@ -62,6 +58,15 @@ import Gallery from "../components/lx/Gallery.astro";
 </script>
 
 <style>
+	.hero-sequence {
+		--hero-track: 200vh;
+		--stage-track: 250vh;
+		--outro-track: 100vh;
+		--stage-unpin: calc(var(--hero-track) + var(--stage-track) - 100vh);
+		--credits-in: 260vh;
+		--credits-len: 40vh;
+	}
+
 	.page-title {
 		--title-start: 78vh;
 		--title-end: 35vh;
@@ -116,6 +121,32 @@ import Gallery from "../components/lx/Gallery.astro";
 	.credits p {
 		color: #f3ede5;
 		margin-inline: 0;
+	}
+
+	h2 {
+		position: relative;
+		color: #d5d5d5;
+		font-size: xxx-large;
+		--h2-glow: 0 0 12px antiquewhite;
+		text-shadow: var(--h2-glow);
+		/*text-shadow: 0 0 0.3rem #FAEBD750;*/
+		margin: 1rem;
+	}
+
+	/*safari special text shadow*/
+	@supports (background: -webkit-named-image(i)) {
+		h2 {
+			--h2-glow: 0 0 8px #FAEBD750;
+		}
+	}
+
+	h2::before {
+		content: '';
+		position: absolute;
+		inset: -2rem -4rem;
+		z-index: -1;
+		background: radial-gradient(ellipse at center, rgb(15 15 15 / 1), rgb(15 15 15 / 0) 85%);
+		opacity: 0;
 	}
 
 	@keyframes title-arc {
@@ -208,50 +239,5 @@ import Gallery from "../components/lx/Gallery.astro";
 			opacity: 1;
 			transform: translateY(0);
 		}
-	}
-
-	.lx :global(p) {
-		color: #714b4b;
-	}
-	/*noinspection CssUnresolvedCustomProperty*/
-	.lx :global(h1)  {
-		font-family: var(--work-sans), sans-serif;
-		font-weight: bolder;
-		margin: 8px;
-
-	}
-	h2 {
-		position: relative;
-		color: #d5d5d5;
-		font-size: xxx-large;
-		--h2-glow: 0 0 12px antiquewhite;
-		text-shadow: var(--h2-glow);
-		/*text-shadow: 0 0 0.3rem #FAEBD750;*/
-		margin: 1rem;
-	}
-	/*safari special text shadow*/
-	@supports (background: -webkit-named-image(i)) {
-		h2 {
-			--h2-glow: 0 0 8px #FAEBD750;
-		}
-	}
-
-	h2::before {
-		content: '';
-		position: absolute;
-		inset: -2rem -4rem;
-		z-index: -1;
-		background: radial-gradient(ellipse at center, rgb(15 15 15 / 1), rgb(15 15 15 / 0) 85%);
-		opacity: 0;
-	}
-	.lx :global(p)  {
-		margin-top: 0;
-		margin-bottom: 8px;
-	}
-	/*noinspection CssUnresolvedCustomProperty*/
-	.lx :global(body),
-	.lx {
-		font-family: var(--libre-baskerville), serif;
-		cursor: default;
 	}
 </style>
