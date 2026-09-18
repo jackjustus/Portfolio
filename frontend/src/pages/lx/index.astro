@@ -1,6 +1,7 @@
 ---
 import LxLayout from "../../layouts/LxLayout.astro";
 import HeroSequence from "../../components/lx/HeroSequence.astro";
+import Competency from "../../components/lx/Competency.astro";
 ---
 
 <LxLayout title="jack justus design">
@@ -9,17 +10,94 @@ import HeroSequence from "../../components/lx/HeroSequence.astro";
 		<h1>
 			jack justus design
 		</h1>
+		<hr />
 		<p>
-			more will come
+			Hey There! My name is Jack Justus and I'm a designer for concert/theatre/live events.
 		</p>
+		<p>
+			I specialize in lighting and scenic, but am always learning and open to trying new things.
+		</p>
+		<p>
+			I'm based out of Southern California & Boston.
+		</p>
+		<p>
+			With that out of the way, I'd love to tell you a bit about myself. I started my journey with design back
+			at the start of high school, when I got to shadow my school's lighting designer for a production of Mamma Mia!
+			It didn't take long for me to fall in love with the combination of art, tech, and storytelling.
+		</p>
+		<p>
+			The fantastic experience I had with that show quickly spiraled into learning everything I could about
+			ETC Eos. I also started getting involved at a church nearby, learning GrandMA2 for a more concert style
+			atmostphere. I really enjoyed the contrast of these two environments. At school, my goal was to support the
+			actors in telling a story to make the audience feel emotion and ask questions. At church, I would design
+			lights which supported the emotions of the music, to mae the audience feel emotion. Both felt great,
+			and taking a step back these two environments really weren't that different from each other.
+		</p>
+		<p>
+			Skip ahead a few years, and I've gotten to design an Iranian Rock Concert at Saban Theatre in LA, as well as
+			an Easter service at one of the largest churches in Indiana (shown above). I love programming on GrandMA3,
+			previs on Depence/Capture, and love designing collaboratively. All of that said, nothing is more important
+			than the people who have given me these incredible opportunities. (thank you!)
+		</p>
+		<p>
+			My lighting world has definitely slowed down since
+			I've moved to college and I started spending time focusing on my engineering coursework and extracurriculars
+			(such as the Terrier Ride Engineering Club -- check out that page!).
+		</p>
+		<p>
+			Nonetheless, I'm confident that the show business is still inside me, and I will always make time
+			for the next opportunity. Long term, I'm looking to merge this passion for entertainment and engineering,
+			most likely in the world of themed entertainment at amusement parks.
+		</p>
+		<p>
+			If your still reading, I'd love to chat. Feel free to email me <a href="mailto:jackjustushome@gmail.com">here.</a>
+		</p>
+		<h2>
+			Competencies
+		</h2>
+		<ul class="flow-list">
+			<Competency name="Vectorworks"></Competency>
+			<Competency name="GrandMA2/3"></Competency>
+			<Competency name="ETC Eos"></Competency>
+		</ul>
 	</section>
 </LxLayout>
 
 <style>
-	h1 {
+	.flow-list {
+		margin: 1rem;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);   /* 3 equal columns that fill the width */
+		gap: 2rem;
+		list-style: none;
+		padding: 0;
+	}
+
+	.flow-list li {
+		break-inside: avoid;   /* don't split an item across two columns */
+	}
+	a {
+		color: inherit;
+		font: inherit;
+	}
+	hr {
+		border: none;
+		border-top: 2px solid navajowhite;
+		margin-bottom: 16px;
+	}
+	p {
 		color: antiquewhite;
+	}
+	h1 {
+		color: navajowhite;
+		font-size: xxx-large;
+	}
+	h2 {
+		color: navajowhite;
+		font-size: x-large;
 	}
 	section {
 		height: 100vh;
+		padding: 96px;
 	}
 </style>
