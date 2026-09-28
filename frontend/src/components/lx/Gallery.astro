@@ -104,6 +104,32 @@ if (slots % 3) console.warn(`[Gallery] ${slots} slots is not a multiple of 3 —
         background-color: #0F0F0F;
     }
 
+    @keyframes stage-settle {
+        0% {
+            translate: 0 0;
+            animation-timing-function: cubic-bezier(0.5, 1, 0.89, 1);
+        }
+        50% {
+            translate: 0 -25vh;
+            animation-timing-function: cubic-bezier(0.11, 0, 0.5, 0);
+        }
+        100% {
+            translate: 0 0;
+        }
+    }
+
+    @supports (animation-timeline: view()) {
+        .stage-track {
+            view-timeline: --stage-in block;
+        }
+
+        .stage {
+            animation: stage-settle linear both;
+            animation-timeline: --stage-in;
+            animation-range: entry 0% entry 100%;
+        }
+    }
+
     .reel,
     .title-card {
         grid-area: stack;
