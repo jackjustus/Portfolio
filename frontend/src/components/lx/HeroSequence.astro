@@ -101,13 +101,15 @@ import Gallery from "./Gallery.astro";
 		margin-inline: auto;
 		padding: var(--credits-pad) 2rem;
 		text-align: center;
-		background: radial-gradient(ellipse at center, rgb(15 15 15 / 0.85), rgb(15 15 15 / 0) 90%);
 		opacity: 0;
 		pointer-events: none;
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		column-gap: 2.5rem;
 		align-items: start;
+		background-color: rgb(0 0 0 / 0.5);
+		border: white solid 4px;
+		border-radius: 2rem;
 	}
 
 	.left-creds {
