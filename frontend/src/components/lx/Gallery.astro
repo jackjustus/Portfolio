@@ -118,15 +118,32 @@ if (slots % 3) console.warn(`[Gallery] ${slots} slots is not a multiple of 3 —
         }
     }
 
+    /* stage-settle played backwards and mirrored: the stage leaves the pin at
+       rest and accelerates up to scroll speed instead of snapping to it. It
+       rides on transform so it composes with stage-settle's translate. */
+    @keyframes stage-release {
+        0% {
+            transform: translateY(0);
+            animation-timing-function: cubic-bezier(0.5, 1, 0.89, 1);
+        }
+        50% {
+            transform: translateY(25vh);
+            animation-timing-function: cubic-bezier(0.11, 0, 0.5, 0);
+        }
+        100% {
+            transform: translateY(0);
+        }
+    }
+
     @supports (animation-timeline: view()) {
         .stage-track {
             view-timeline: --stage-in block;
         }
 
         .stage {
-            animation: stage-settle linear both;
-            animation-timeline: --stage-in;
-            animation-range: entry 0% entry 100%;
+            animation: stage-settle linear both, stage-release linear both;
+            animation-timeline: --stage-in, --stage-in;
+            animation-range: entry 0% entry 100%, exit 0% exit 100%;
         }
     }
 
