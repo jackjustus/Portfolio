@@ -1,26 +1,25 @@
 ---
 import HeroImg from "./HeroImg.astro";
 import Gallery from "./Gallery.astro";
+
+const title = "The Sun";
 ---
 
 <div class="hero-sequence">
 	<HeroImg />
 	<Gallery>
 		<div class="credits" id="credits">
-			<div class="left-creds">
-				<p>set & lx</p>
-				<p>venue</p>
-				<p>photos</p>
-			</div>
-			<div class="right-creds">
-				<p>jake collins & jack justus</p>
-				<p>connection pointe</p>
-				<p>aaron williams & connection pointe</p>
-			</div>
+			<p class="role">set & lx</p>
+			<p>jake collins & jack justus</p>
+			<p class="role">venue</p>
+			<p>connection pointe</p>
+			<p class="role">photos</p>
+			<p>aaron williams & connection pointe</p>
+			<h2 class="title-ghost" aria-hidden="true">{title}</h2>
 		</div>
 	</Gallery>
 	<div class="page-title" id="page-title">
-		<h2>The Sun</h2>
+		<h2>{title}</h2>
 	</div>
 </div>
 
@@ -105,23 +104,33 @@ import Gallery from "./Gallery.astro";
 		opacity: 0;
 		pointer-events: none;
 		display: grid;
-		grid-template-columns: 1fr 1fr;
-		column-gap: 2.5rem;
-		align-items: start;
+		grid-template-columns: minmax(max-content, 1fr) max-content minmax(0, 1fr);
+		align-items: baseline;
 		background-color: rgb(0 0 0 / 0.5);
 		border: antiquewhite solid 4px;
 		border-radius: 2rem;
 	}
 
-	.left-creds {
+	.credits .role {
+		grid-column: 1;
 		text-align: right;
 	}
 
-	.right-creds {
-		text-align: left;
+	.credits p:not(.role) {
+		grid-column: 2 / -1;
+		padding-left: 2.5rem;
+	}
+
+	.title-ghost {
+		grid-column: 2;
+		height: 0;
+		margin: 0;
+		overflow: hidden;
+		visibility: hidden;
 	}
 
 	.credits p {
+		text-align: left;
 		color: #f3ede5;
 		margin-inline: 0;
 	}
