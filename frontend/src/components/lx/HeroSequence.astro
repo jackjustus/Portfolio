@@ -57,6 +57,12 @@ const title = "The Sun";
 </script>
 
 <style>
+	@property --glow {
+		syntax: '<number>';
+		inherits: true;
+		initial-value: 1;
+	}
+
 	.hero-sequence {
 		--hero-track: 200vh;
 		--stage-track: 150vh;
@@ -109,6 +115,7 @@ const title = "The Sun";
 		background-color: rgb(0 0 0 / 0.5);
 		border: antiquewhite solid 4px;
 		border-radius: 2rem;
+		box-shadow: 0 0rem 2rem rgb(250 235 215 / 0.4);
 	}
 
 	.credits .role {
@@ -139,7 +146,7 @@ const title = "The Sun";
 		color: #d5d5d5;
 		font-size: 3rem;
 		line-height: 1.2;
-		--h2-glow: 0 0 12px antiquewhite;
+		--h2-glow: 0 0 12px rgb(250 235 215 / var(--glow));
 		text-shadow: var(--h2-glow);
 		/*text-shadow: 0 0 0.3rem #FAEBD750;*/
 		margin: 1rem;
@@ -148,7 +155,7 @@ const title = "The Sun";
 	/*safari special text shadow*/
 	@supports (background: -webkit-named-image(i)) {
 		h2 {
-			--h2-glow: 0 0 8px #FAEBD750;
+			--h2-glow: 0 0 8px rgb(250 235 215 / calc(0.31 * var(--glow)));
 		}
 	}
 
@@ -156,15 +163,20 @@ const title = "The Sun";
 		0% {
 			opacity: 0;
 			translate: 0 0;
+			--glow: 1;
 		}
 		50% {
 			opacity: 1;
 			translate: 0 0;
 			animation-timing-function: var(--title-drift-ease);
 		}
+		85% {
+			--glow: 1;
+		}
 		100% {
 			opacity: 1;
 			translate: 0 var(--title-travel);
+			--glow: 0;
 		}
 	}
 
@@ -203,13 +215,14 @@ const title = "The Sun";
 	@supports not (animation-timeline: scroll()) {
 		.page-title {
 			opacity: 0;
-			transition: opacity 0.6s var(--title-fade-ease), translate 0.8s var(--title-drift-ease), transform 0.6s linear;
+			transition: opacity 0.6s var(--title-fade-ease), translate 0.8s var(--title-drift-ease), --glow 0.3s ease-out 0.5s, transform 0.6s linear;
 		}
 		.page-title.shown {
 			opacity: 1;
 		}
 		.page-title.drifted {
 			translate: 0 var(--title-travel);
+			--glow: 0;
 		}
 		.page-title.exited {
 			transform: translateY(var(--title-exit));
