@@ -30,6 +30,20 @@ const title = "The Sun";
 	const EXIT_AT = 2.5;
 
 	let onScroll: (() => void) | null = null;
+	let cardObserver: ResizeObserver | null = null;
+
+	function initCard() {
+		cardObserver?.disconnect();
+
+		const sequence = document.querySelector<HTMLElement>('.hero-sequence');
+		const credits = document.getElementById('credits');
+		if (!sequence || !credits) return;
+
+		cardObserver = new ResizeObserver(() => {
+			sequence.style.setProperty('--credits-h', `${credits.offsetHeight}px`);
+		});
+		cardObserver.observe(credits);
+	}
 
 	function initTitle() {
 		if (CSS.supports('animation-timeline', 'scroll()')) return;
@@ -52,8 +66,12 @@ const title = "The Sun";
 		onScroll();
 	}
 
+	initCard();
 	initTitle();
-	document.addEventListener('astro:page-load', initTitle);
+	document.addEventListener('astro:page-load', () => {
+		initCard();
+		initTitle();
+	});
 </script>
 
 <style>
@@ -73,9 +91,10 @@ const title = "The Sun";
 		--stage-unpin: calc(var(--hero-track) + var(--stage-track) - 100vh);
 		--credits-in: 160vh;
 		--credits-len: 40vh;
-		--title-end: 35vh;
 		--title-room: 5.6rem;
 		--credits-lip: 1.5rem;
+		--credits-h: 22rem;
+		--title-end: calc(50vh - var(--credits-h) / 2 + var(--credits-lip));
 	}
 
 	.page-title {
