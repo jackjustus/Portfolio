@@ -63,7 +63,10 @@ const title = "The Sun";
 		initial-value: 1;
 	}
 
-	.hero-sequence {
+	/* Content after the sequence reads the same tracks so it can run the
+	   release curve in step with the stage. */
+	.hero-sequence,
+	.hero-sequence ~ :global(*) {
 		--hero-track: 200vh;
 		--stage-track: 150vh;
 		--outro-track: 100vh;
@@ -189,6 +192,25 @@ const title = "The Sun";
 		}
 	}
 
+	/* Same curve as the stage's stage-release. The title rides it so it stays
+	   locked to the credits card (on the h2 because .page-title's translate
+	   and transform are both already animated), and whatever follows the
+	   sequence rides it so it stays butted against the stage's bottom edge
+	   instead of sliding under it. */
+	@keyframes title-release {
+		0% {
+			translate: 0 0;
+			animation-timing-function: cubic-bezier(0.5, 1, 0.89, 1);
+		}
+		50% {
+			translate: 0 25vh;
+			animation-timing-function: cubic-bezier(0.11, 0, 0.5, 0);
+		}
+		100% {
+			translate: 0 0;
+		}
+	}
+
 	@keyframes credits-in {
 		from {
 			opacity: 0;
@@ -203,6 +225,13 @@ const title = "The Sun";
 			animation: title-arc var(--title-fade-ease) both, title-leave linear both;
 			animation-timeline: scroll(root block), scroll(root block);
 			animation-range: 0 var(--hero-track), var(--stage-unpin) calc(var(--stage-unpin) + var(--outro-track));
+		}
+
+		.page-title h2,
+		.hero-sequence ~ :global(*) {
+			animation: title-release linear both;
+			animation-timeline: scroll(root block);
+			animation-range: var(--stage-unpin) calc(var(--stage-unpin) + var(--outro-track));
 		}
 
 		.credits {
