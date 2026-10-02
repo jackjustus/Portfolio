@@ -1,26 +1,25 @@
 ---
 import HeroImg from "./HeroImg.astro";
 import Gallery from "./Gallery.astro";
+
+const title = "The Sun";
 ---
 
 <div class="hero-sequence">
 	<HeroImg />
 	<Gallery>
 		<div class="credits" id="credits">
-			<div class="left-creds">
-				<p>set & lx</p>
-				<p>venue</p>
-				<p>photos</p>
-			</div>
-			<div class="right-creds">
-				<p>jake collins & jack justus</p>
-				<p>connection pointe</p>
-				<p>aaron williams & connection pointe</p>
-			</div>
+			<p class="role">set & lx</p>
+			<p>jake collins & jack justus</p>
+			<p class="role">venue</p>
+			<p>connection pointe</p>
+			<p class="role">photos</p>
+			<p>aaron williams & connection pointe</p>
+			<h2 class="title-ghost" aria-hidden="true">{title}</h2>
 		</div>
 	</Gallery>
 	<div class="page-title" id="page-title">
-		<h2>The Sun</h2>
+		<h2>{title}</h2>
 	</div>
 </div>
 
@@ -31,6 +30,20 @@ import Gallery from "./Gallery.astro";
 	const EXIT_AT = 2.5;
 
 	let onScroll: (() => void) | null = null;
+	let cardObserver: ResizeObserver | null = null;
+
+	function initCard() {
+		cardObserver?.disconnect();
+
+		const sequence = document.querySelector<HTMLElement>('.hero-sequence');
+		const credits = document.getElementById('credits');
+		if (!sequence || !credits) return;
+
+		cardObserver = new ResizeObserver(() => {
+			sequence.style.setProperty('--credits-h', `${credits.offsetHeight}px`);
+		});
+		cardObserver.observe(credits);
+	}
 
 	function initTitle() {
 		if (CSS.supports('animation-timeline', 'scroll()')) return;
@@ -53,11 +66,21 @@ import Gallery from "./Gallery.astro";
 		onScroll();
 	}
 
+	initCard();
 	initTitle();
-	document.addEventListener('astro:page-load', initTitle);
+	document.addEventListener('astro:page-load', () => {
+		initCard();
+		initTitle();
+	});
 </script>
 
 <style>
+	@property --glow {
+		syntax: '<number>';
+		inherits: true;
+		initial-value: 1;
+	}
+
 	/* Content after the sequence reads the same tracks so it can run the
 	   release curve in step with the stage. */
 	.hero-sequence,
@@ -68,9 +91,10 @@ import Gallery from "./Gallery.astro";
 		--stage-unpin: calc(var(--hero-track) + var(--stage-track) - 100vh);
 		--credits-in: 160vh;
 		--credits-len: 40vh;
-		--title-end: 35vh;
 		--title-room: 5.6rem;
 		--credits-lip: 1.5rem;
+		--credits-h: 22rem;
+		--title-end: calc(50vh - var(--credits-h) / 2 + var(--credits-lip));
 	}
 
 	.page-title {
@@ -108,23 +132,34 @@ import Gallery from "./Gallery.astro";
 		opacity: 0;
 		pointer-events: none;
 		display: grid;
-		grid-template-columns: 1fr 1fr;
-		column-gap: 2.5rem;
-		align-items: start;
+		grid-template-columns: minmax(max-content, 1fr) max-content minmax(0, 1fr);
+		align-items: baseline;
 		background-color: rgb(0 0 0 / 0.5);
 		border: antiquewhite solid 4px;
 		border-radius: 2rem;
+		box-shadow: 0 0rem 2rem rgb(250 235 215 / 0.4);
 	}
 
-	.left-creds {
+	.credits .role {
+		grid-column: 1;
 		text-align: right;
 	}
 
-	.right-creds {
-		text-align: left;
+	.credits p:not(.role) {
+		grid-column: 2 / -1;
+		padding-left: 2.5rem;
+	}
+
+	.title-ghost {
+		grid-column: 2;
+		height: 0;
+		margin: 0;
+		overflow: hidden;
+		visibility: hidden;
 	}
 
 	.credits p {
+		text-align: left;
 		color: #f3ede5;
 		margin-inline: 0;
 	}
@@ -133,7 +168,7 @@ import Gallery from "./Gallery.astro";
 		color: #d5d5d5;
 		font-size: 3rem;
 		line-height: 1.2;
-		--h2-glow: 0 0 12px antiquewhite;
+		--h2-glow: 0 0 12px rgb(250 235 215 / var(--glow));
 		text-shadow: var(--h2-glow);
 		/*text-shadow: 0 0 0.3rem #FAEBD750;*/
 		margin: 1rem;
@@ -142,7 +177,7 @@ import Gallery from "./Gallery.astro";
 	/*safari special text shadow*/
 	@supports (background: -webkit-named-image(i)) {
 		h2 {
-			--h2-glow: 0 0 8px #FAEBD750;
+			--h2-glow: 0 0 8px rgb(250 235 215 / calc(0.31 * var(--glow)));
 		}
 	}
 
@@ -150,15 +185,20 @@ import Gallery from "./Gallery.astro";
 		0% {
 			opacity: 0;
 			translate: 0 0;
+			--glow: 1;
 		}
 		50% {
 			opacity: 1;
 			translate: 0 0;
 			animation-timing-function: var(--title-drift-ease);
 		}
+		85% {
+			--glow: 1;
+		}
 		100% {
 			opacity: 1;
 			translate: 0 var(--title-travel);
+			--glow: 0;
 		}
 	}
 
@@ -223,13 +263,14 @@ import Gallery from "./Gallery.astro";
 	@supports not (animation-timeline: scroll()) {
 		.page-title {
 			opacity: 0;
-			transition: opacity 0.6s var(--title-fade-ease), translate 0.8s var(--title-drift-ease), transform 0.6s linear;
+			transition: opacity 0.6s var(--title-fade-ease), translate 0.8s var(--title-drift-ease), --glow 0.3s ease-out 0.5s, transform 0.6s linear;
 		}
 		.page-title.shown {
 			opacity: 1;
 		}
 		.page-title.drifted {
 			translate: 0 var(--title-travel);
+			--glow: 0;
 		}
 		.page-title.exited {
 			transform: translateY(var(--title-exit));
