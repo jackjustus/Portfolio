@@ -1,16 +1,21 @@
 ---
 import EngLayout from '../../layouts/EngLayout.astro';
-import Title from "../../components/eng/Title.astro";
 import ProjectCard from "../../components/eng/ProjectCard.astro";
 ---
 
 <EngLayout title="jack justus engineering">
 	<div class="lx">
-		<Title/>
-		<div class="body-container">
+		<div class="header-text">
+			<!--<hr />-->
 			<h1>
-				PROJECTS
+				JACK JUSTUS ENGINEERING
 			</h1>
+			<!--<hr />-->
+		</div>
+		<div class="body-container">
+			<!--<h1>-->
+			<!--	PROJECTS-->
+			<!--</h1>-->
 			<ProjectCard
 				title="This Website"
 				desc="This website is made with Astro, Vue, and 100% handwitten code. find out why..."
@@ -19,6 +24,7 @@ import ProjectCard from "../../components/eng/ProjectCard.astro";
 			<ProjectCard
 				title="Ride Engineering Competition"
 				desc="The ride engineering competition is a competition where teams from around the country build a model amuesment ride of their own design with fully built out moving components, electronics, and control software."
+				href="https://jackjustusld.com/eng"
 			/>
 		</div>
 	</div>
@@ -27,7 +33,11 @@ import ProjectCard from "../../components/eng/ProjectCard.astro";
 <style>
 	.body-container {
 		//background-color: #000;
-		margin: 0 16px;
+		margin: 0 2rem;
 		height: 200vh;
+	}
+	.header-text {
+		text-align: center;
+		margin: 2rem 0rem;
 	}
 </style>

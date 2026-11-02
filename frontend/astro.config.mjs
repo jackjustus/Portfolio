@@ -26,6 +26,18 @@ export default defineConfig({
       provider: fontProviders.google(),
       name: "Libre Baskerville",
       cssVariable: "--libre-baskerville"
+    },
+    {
+      provider: fontProviders.local(),
+      name: "IBM VGA",
+      cssVariable: "--font-vga",
+      options: {
+        variants: [{
+          src: ["./src/assets/fonts/PxPlus_IBM_VGA_9x16.woff2"],
+          weight: "normal",
+          style: "normal",
+        }],
+      },
     }
   ]
 });

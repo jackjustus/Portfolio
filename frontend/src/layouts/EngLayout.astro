@@ -3,26 +3,29 @@ import Layout from './Layout.astro';
 const { title } = Astro.props;
 ---
 <Layout title={title}>
-    <div class="lx"><slot /></div>
+    <div><slot /></div>
 </Layout>
 
 <style is:global>
   .lx p {
-      color: #555555;
+      color: #ebdbb2;
       margin-block: 0.4rem 1rem;
       margin-inline: 0.5rem;
   }
   /*noinspection CssUnresolvedCustomProperty*/
   .lx h1  {
-      font-family: var(--work-sans), sans-serif;
+      font-family: var(--font-vga), monospace;
+      -webkit-font-smoothing: none;
       font-weight: bolder;
+      color: #ebdbb2;
       padding: 0;
-      font-size: x-large;
+      font-size: 48px;
       margin: 8px 8px 8px 8px;
   }
   /*noinspection CssUnresolvedCustomProperty*/
   .lx h2  {
-      font-family: var(--libre-baskerville), serif;
+      font-family: var(--font-vga), serif;
+      color: #ebdbb2;
       font-weight: bolder;
       margin-block: 2rem 1rem;
       margin-inline: 0.5rem;
@@ -44,6 +47,6 @@ const { title } = Astro.props;
       cursor: default;
   }
   html {
-      background-color: #E0EFEF;
+      background-color: #282828;
   }
 </style>
