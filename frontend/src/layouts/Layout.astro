@@ -21,6 +21,7 @@ const { title } = Astro.props;
         <meta name="generator" content={Astro.generator} />
         <Font cssVariable="--work-sans" />
         <Font cssVariable="--libre-baskerville" />
+        <Font cssVariable="--font-vga" preload={true}/>
         <title>{title}</title>
         <ClientRouter />
     </head>
