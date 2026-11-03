@@ -1,10 +1,11 @@
 ---
-const {title, desc, slug, href} = Astro.props
+const {title, desc, slug, href, meta} = Astro.props
 interface Props {
   title: string;
   desc: string;
   slug?: string;
   href?: string;
+  meta?: string;
 }
 const comingSoon = !slug && !href
 const Tag = comingSoon ? 'div' : 'a'
@@ -18,13 +19,14 @@ import {fade} from "astro:transitions"
 <Tag class="card" {...linkProps}>
   <div class="inner">
     <div>
-      <h2 transition:name={`project-title-${slug}`} class="card-title">
+      <h2 transition:name={`project-title-${slug ?? title.replace(/\W+/g, '-')}`} class="card-title">
           { title }
       </h2>
       <p>
           { desc }
       </p>
     </div>
+    {meta && <p class="meta">{meta}</p>}
     <!--<p class="arrow">-->
     <!--  ↗-->
     <!--</p>-->
@@ -63,6 +65,11 @@ import {fade} from "astro:transitions"
   .inner {
       display: flex;
       justify-content: space-between;
+  }
+  .meta {
+    flex-shrink: 0;
+    margin-block: 1rem 0;
+    color: #458588;
   }
   .overlay {
     position: absolute;
