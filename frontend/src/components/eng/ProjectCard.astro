@@ -1,24 +1,32 @@
 ---
-const {title, desc, slug} = Astro.props
+const {title, desc, slug, href, meta} = Astro.props
 interface Props {
   title: string;
   desc: string;
   slug?: string;
+  href?: string;
+  meta?: string;
 }
-const comingSoon = !slug
+const comingSoon = !slug && !href
 const Tag = comingSoon ? 'div' : 'a'
+const linkProps = slug
+  ? {href: `/eng/${slug}`}
+  : href
+    ? {href, target: '_blank', rel: 'noopener noreferrer'}
+    : {}
 import {fade} from "astro:transitions"
 ---
-<Tag class="card" href={`/eng/${slug}`}>
+<Tag class="card" {...linkProps}>
   <div class="inner">
     <div>
-      <h2 transition:name={`project-title-${slug}`} class="card-title">
+      <h2 transition:name={`project-title-${slug ?? title.replace(/\W+/g, '-')}`} class="card-title">
           { title }
       </h2>
       <p>
           { desc }
       </p>
     </div>
+    {meta && <p class="meta">{meta}</p>}
     <!--<p class="arrow">-->
     <!--  ↗-->
     <!--</p>-->
@@ -40,15 +48,16 @@ import {fade} from "astro:transitions"
     position: relative;
     color: inherit;
     text-decoration: none;
-    margin: 1rem 0;
-    border-radius: 1rem;
+    margin: 2rem 0;
+    border-radius: 0;
     transition: all .2s ease;
     padding: 1rem;
-    outline: 2px solid #FFFFFF;
+    outline: 2px solid #665c54;
+    box-shadow: 10px 10px 10px rgba(0,0,0,1);
   }
   .card:hover {
-      box-shadow: 0 0 20px rgba(0,0,0,.1);
-      background-color: #FFFFFF;
+      //background-color: #FFFFFF;
+    outline: 2px solid #fabd2f;
   }
   .card-title{
     margin-block: 1rem 1rem;
@@ -56,6 +65,11 @@ import {fade} from "astro:transitions"
   .inner {
       display: flex;
       justify-content: space-between;
+  }
+  .meta {
+    flex-shrink: 0;
+    margin-block: 1rem 0;
+    color: #458588;
   }
   .overlay {
     position: absolute;

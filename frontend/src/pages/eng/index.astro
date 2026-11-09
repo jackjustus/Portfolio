@@ -1,16 +1,45 @@
 ---
 import EngLayout from '../../layouts/EngLayout.astro';
-import Title from "../../components/eng/Title.astro";
 import ProjectCard from "../../components/eng/ProjectCard.astro";
 ---
 
 <EngLayout title="jack justus engineering">
 	<div class="lx">
-		<Title/>
-		<div class="body-container">
+		<div class="header-text">
+			<!--<hr />-->
 			<h1>
-				PROJECTS
+				JACK JUSTUS ENGINEERING
 			</h1>
+			<div class="header-links">
+			<a
+				class="icon-link"
+				href="/eng/resume.pdf"
+				target="_blank"
+				rel="noopener noreferrer"
+				aria-label="Resume"
+			>
+				<svg viewBox="0 0 16 16" width="32" height="32" fill="currentColor" aria-hidden="true">
+					<path d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z" />
+				</svg>
+			</a>
+			<a
+				class="icon-link"
+				href="https://github.com/jackjustus"
+				target="_blank"
+				rel="noopener noreferrer"
+				aria-label="GitHub profile"
+			>
+				<svg viewBox="0 0 16 16" width="32" height="32" fill="currentColor" aria-hidden="true">
+					<path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z" />
+				</svg>
+			</a>
+			</div>
+			<!--<hr />-->
+		</div>
+		<div class="body-container">
+			<!--<h1>-->
+			<!--	PROJECTS-->
+			<!--</h1>-->
 			<ProjectCard
 				title="This Website"
 				desc="This website is made with Astro, Vue, and 100% handwitten code. find out why..."
@@ -18,8 +47,10 @@ import ProjectCard from "../../components/eng/ProjectCard.astro";
 			/>
 			<ProjectCard
 				title="Ride Engineering Competition"
-				desc="The ride engineering competition is a competition where teams from around the country build a model amuesment ride of their own design with fully built out moving components, electronics, and control software."
+				desc="Ever wondered what happens when a bunch of college students try to build an amusement ride?"
+				href="https://jackjustusld.com/eng"
 			/>
+			<!--<h2>ON GITHUB</h2>-->
 		</div>
 	</div>
 </EngLayout>
@@ -27,7 +58,23 @@ import ProjectCard from "../../components/eng/ProjectCard.astro";
 <style>
 	.body-container {
 		//background-color: #000;
-		margin: 0 16px;
+		margin: 0 2rem;
 		height: 200vh;
+	}
+	.header-text {
+		text-align: center;
+		margin: 2rem 0rem;
+	}
+	.header-links {
+		display: flex;
+		justify-content: center;
+		gap: 1rem;
+	}
+	.icon-link {
+		display: inline-flex;
+		color: #ebdbb2;
+	}
+	.icon-link:hover {
+		color: #458588;
 	}
 </style>
