@@ -1,25 +1,6 @@
 ---
 import EngLayout from '../../layouts/EngLayout.astro';
 import ProjectCard from "../../components/eng/ProjectCard.astro";
-
-const featuredRepos = ['CreditTracker', 'Portfolio', 'BUTM-IntroProject-Team1', 'resume'];
-
-interface Repo {
-	name: string;
-	description: string | null;
-	html_url: string;
-	language: string | null;
-}
-
-// Fetched at build time. Any failure here fails the build.
-const res = await fetch('https://api.github.com/users/jackjustus/repos?per_page=100');
-if (!res.ok) throw new Error(`GitHub API responded ${res.status}`);
-const all: Repo[] = await res.json();
-const repos = featuredRepos.map((name) => {
-	const repo = all.find((repo) => repo.name === name);
-	if (!repo) throw new Error(`Featured repo not found on GitHub: ${name}`);
-	return repo;
-});
 ---
 
 <EngLayout title="jack justus engineering">
@@ -33,8 +14,6 @@ const repos = featuredRepos.map((name) => {
 			<a
 				class="icon-link"
 				href="https://github.com/jackjustus/resume/releases/download/latest/Jack_Justus_SWE_Resume.png"
-				target="_blank"
-				rel="noopener noreferrer"
 				aria-label="Resume"
 			>
 				<svg viewBox="0 0 16 16" width="32" height="32" fill="currentColor" aria-hidden="true">
@@ -69,15 +48,7 @@ const repos = featuredRepos.map((name) => {
 				desc="Ever wondered what happens when a bunch of college students try to build an amusement ride?"
 				href="https://jackjustusld.com/eng"
 			/>
-			<h2>ON GITHUB</h2>
-			{repos.map((repo) => (
-				<ProjectCard
-					title={repo.name}
-					desc={repo.description ?? ''}
-					href={repo.html_url}
-					meta={repo.language ?? undefined}
-				/>
-			))}
+			<!--<h2>ON GITHUB</h2>-->
 		</div>
 	</div>
 </EngLayout>
