@@ -24,8 +24,9 @@ export default defineConfig({
       // Ending on a generic family lets Astro generate a size-adjusted fallback
       // face, so text doesn't reflow when Work Sans swaps in.
       fallbacks: ["sans-serif"],
-      // Headings are bold; with only 400 downloaded the browser fakes it.
-      weights: ["400", "700"],
+      // Variable range: real bold for headings, and every weight in between so
+      // the homepage heading can animate its weight once the font loads.
+      weights: ["100 900"],
     },
     {
       provider: fontProviders.google(),

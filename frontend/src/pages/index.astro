@@ -6,10 +6,32 @@ import WordOfInterest from "../components/index/WordOfInterest.astro";
 
 <Layout title="jack justus design">
 	<div class="header-border block">
-		<h1>
+		<h1 class="bloom">
 			jack justus design
 		</h1>
 	</div>
+	<script is:inline>
+		// Weight bloom: the heading stays hidden until Work Sans is ready (or
+		// 300ms pass, whichever is first), then fades in thin and grows to bold.
+		(() => {
+			const h1 = document.querySelector("h1.bloom");
+			if (!h1) return;
+			const MAX_WAIT_MS = 300;
+
+			// Astro may rename the family, so match on the name rather than an
+			// exact string, and skip the generated local "fallback" face.
+			const faces = [...document.fonts].filter(
+				(f) => f.family.includes("Work Sans") && !f.family.includes("fallback") && f.style === "normal",
+			);
+			const fontReady = Promise.all(faces.map((f) => f.load())).catch(() => {});
+			const timeout = new Promise((r) => setTimeout(r, MAX_WAIT_MS));
+
+			Promise.race([fontReady, timeout]).then(() => {
+				// Next frame, so the starting state has painted and the transition runs.
+				requestAnimationFrame(() => h1.classList.add("bloomed"));
+			});
+		})();
+	</script>
 	<div class="block">
 		<p>
 			Hey my name is Jack and i love{" "}
@@ -45,9 +67,32 @@ import WordOfInterest from "../components/index/WordOfInterest.astro";
 	/*noinspection CssUnresolvedCustomProperty*/
 	h1 {
 		font-family: var(--work-sans), sans-serif;
-		font-weight: bolder;
+		font-weight: 700;
 		margin: 8px;
 		color: bisque;
+	}
+	/* Starting state: invisible and thin while the font loads. */
+	h1.bloom:not(.bloomed) {
+		opacity: 0;
+		font-weight: 100;
+		/* Failsafe: if the script never runs, show the heading anyway. */
+		animation: bloom-failsafe 0s 1.5s forwards;
+	}
+	h1.bloom.bloomed {
+		transition:
+			opacity 250ms ease-out,
+			font-weight 900ms cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+	@keyframes bloom-failsafe {
+		to {
+			opacity: 1;
+			font-weight: 700;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		h1.bloom.bloomed {
+			transition: none;
+		}
 	}
 	.block {
 		background-color: black;

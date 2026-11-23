@@ -23,13 +23,8 @@ const { title, preloadFonts = ["--work-sans"] } = Astro.props;
         <link rel="preconnect" href="https://static.jackjust.com"/>
         <meta name="viewport" content="width=device-width" />
         <meta name="generator" content={Astro.generator} />
-        <Font
-            cssVariable="--work-sans"
-            preload={preloadFonts.includes("--work-sans") && [
-                { weight: "400" },                    // body, incl. the italic disclaimer
-                { weight: "700", style: "normal" },   // headings (no bold italic on the page)
-            ]}
-        />
+        <!-- Work Sans is variable: one file per style (normal + italic) covers every weight. -->
+        <Font cssVariable="--work-sans" preload={preloadFonts.includes("--work-sans")} />
         <Font cssVariable="--libre-baskerville" preload={preloadFonts.includes("--libre-baskerville")} />
         <Font cssVariable="--font-vga" preload={preloadFonts.includes("--font-vga")} />
         <title>{title}</title>
