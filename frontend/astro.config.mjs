@@ -24,6 +24,8 @@ export default defineConfig({
       // Ending on a generic family lets Astro generate a size-adjusted fallback
       // face, so text doesn't reflow when Work Sans swaps in.
       fallbacks: ["sans-serif"],
+      // Headings are bold; with only 400 downloaded the browser fakes it.
+      weights: ["400", "700"],
     },
     {
       provider: fontProviders.google(),
