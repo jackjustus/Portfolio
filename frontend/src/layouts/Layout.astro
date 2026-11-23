@@ -2,7 +2,11 @@
 import '../styles/jack.css'
 import { ClientRouter } from "astro:transitions";
 import { Font } from "astro:assets";
-const { title } = Astro.props;
+// Fonts to preload, by cssVariable. Preloading lets the browser fetch the font
+// alongside the HTML instead of discovering it after CSS parses, which is what
+// causes the fallback-then-swap flash. Only preload what the page shows above
+// the fold: every preload competes for bandwidth with the ones that matter.
+const { title, preloadFonts = ["--work-sans"] } = Astro.props;
 ---
 <html lang="en">
     <head>
@@ -19,9 +23,9 @@ const { title } = Astro.props;
         <link rel="preconnect" href="https://static.jackjust.com"/>
         <meta name="viewport" content="width=device-width" />
         <meta name="generator" content={Astro.generator} />
-        <Font cssVariable="--work-sans" />
-        <Font cssVariable="--libre-baskerville" />
-        <Font cssVariable="--font-vga" preload={true}/>
+        <Font cssVariable="--work-sans" preload={preloadFonts.includes("--work-sans")} />
+        <Font cssVariable="--libre-baskerville" preload={preloadFonts.includes("--libre-baskerville")} />
+        <Font cssVariable="--font-vga" preload={preloadFonts.includes("--font-vga")} />
         <title>{title}</title>
         <ClientRouter />
     </head>

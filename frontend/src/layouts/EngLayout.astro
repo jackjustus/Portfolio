@@ -2,7 +2,7 @@
 import Layout from './Layout.astro';
 const { title } = Astro.props;
 ---
-<Layout title={title}>
+<Layout title={title} preloadFonts={["--font-vga"]}>
     <div><slot /></div>
 </Layout>
 

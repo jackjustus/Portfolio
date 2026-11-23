@@ -20,17 +20,22 @@ export default defineConfig({
     {
       provider: fontProviders.google(),
       name: "Work Sans",
-      cssVariable: "--work-sans"
+      cssVariable: "--work-sans",
+      // Ending on a generic family lets Astro generate a size-adjusted fallback
+      // face, so text doesn't reflow when Work Sans swaps in.
+      fallbacks: ["sans-serif"],
     },
     {
       provider: fontProviders.google(),
       name: "Libre Baskerville",
-      cssVariable: "--libre-baskerville"
+      cssVariable: "--libre-baskerville",
+      fallbacks: ["serif"],
     },
     {
       provider: fontProviders.local(),
       name: "IBM VGA",
       cssVariable: "--font-vga",
+      fallbacks: ["monospace"],
       options: {
         variants: [{
           src: ["./src/assets/fonts/PxPlus_IBM_VGA_9x16.woff2"],
